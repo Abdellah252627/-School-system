@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>نظام إدارة المدرسة - نسخة العرض</title>
+  <style>
+    /* General Styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      line-height: 1.6;
+      background-color: #f8f9fa;
+      color: #333;
+      direction: rtl;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 15px;
+    }
+
+    a {
+      text-decoration: none;
+      color: #3498db;
+    }
+
+    ul {
+      list-style: none;
+    }
+
+    .btn {
+      display: inline-block;
+      background: #3498db;
+      color: #fff;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background 0.3s;
+    }
+
+    .btn:hover {
+      background: #2980b9;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    /* Header */
+    #main-header {
+      background-color: #fff;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      padding: 15px 0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    #main-header .container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    #main-header h1 {
+      font-size: 24px;
+      color: #3498db;
+    }
+
+    #main-nav ul {
+      display: flex;
+    }
+
+    #main-nav li {
+      margin-right: 20px;
+    }
+
+    #main-nav a {
+      color: #333;
+      font-weight: 500;
+      padding: 5px 0;
+      position: relative;
+    }
+
+    #main-nav a.active {
+      color: #3498db;
+    }
+
+    #main-nav a.active::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      width: 100%;
+      height: 2px;
+      background-color: #3498db;
+    }
+
+    /* Main Content */
+    #main-content {
+      min-height: calc(100vh - 140px);
+      padding: 30px 0;
+    }
+
+    .section {
+      display: none;
+    }
+
+    .section.active {
+      display: block;
+    }
+
+    /* Home Section */
+    #home-section {
+      text-align: center;
+    }
+
+    #home-section h2 {
+      font-size: 32px;
+      margin-bottom: 20px;
+      color: #2c3e50;
+    }
+
+    #home-section p {
+      font-size: 18px;
+      max-width: 800px;
+      margin: 0 auto 40px;
+      color: #7f8c8d;
+    }
+
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 30px;
+      margin-top: 50px;
+    }
+
+    .feature {
+      background-color: #fff;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+      text-align: right;
+    }
+
+    .feature h3 {
+      font-size: 20px;
+      margin-bottom: 15px;
+      color: #3498db;
+    }
+
+    /* Login Section */
+    #login-section .form-container {
+      max-width: 400px;
+      margin: 0 auto;
+      background-color: #fff;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    #login-section h2 {
+      text-align: center;
+      margin-bottom: 30px;
+      color: #2c3e50;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: 500;
+    }
+
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      font-size: 16px;
+    }
+
+    .form-group button {
+      width: 100%;
+    }
+
+    /* Dashboard */
+    .dashboard h2 {
+      margin-bottom: 20px;
+      color: #2c3e50;
+    }
+
+    .dashboard-menu {
+      display: flex;
+      margin-bottom: 30px;
+      background-color: #fff;
+      border-radius: 5px;
+      overflow: hidden;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .dashboard-btn {
+      padding: 12px 20px;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      flex: 1;
+      font-size: 16px;
+      transition: all 0.3s;
+    }
+
+    .dashboard-btn:hover {
+      background-color: #f8f9fa;
+    }
+
+    .dashboard-btn.active {
+      background-color: #3498db;
+      color: #fff;
+      font-weight: 500;
+    }
+
+    .dashboard-section {
+      display: none;
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 5px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .dashboard-section.active {
+      display: block;
+    }
+
+    .dashboard-section h3 {
+      margin-bottom: 20px;
+      color: #2c3e50;
+    }
+
+    /* Tables */
+    .table-container {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+
+    table th,
+    table td {
+      padding: 12px 15px;
+      text-align: right;
+      border-bottom: 1px solid #ddd;
+    }
+
+    table th {
+      background-color: #f8f9fa;
+      font-weight: 600;
+      color: #2c3e50;
+    }
+
+    table tr:last-child td {
+      border-bottom: none;
+    }
+
+    table tr:hover {
+      background-color: #f8f9fa;
+    }
+
+    .action-bar {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    /* Footer */
+    #main-footer {
+      background-color: #2c3e50;
+      color: #fff;
+      padding: 20px 0;
+      text-align: center;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      #main-header .container {
+        flex-direction: column;
+      }
+      
+      #main-header h1 {
+        margin-bottom: 15px;
+      }
+      
+      .dashboard-menu {
+        flex-wrap: wrap;
+      }
+      
+      .dashboard-btn {
+        flex-basis: 50%;
+      }
+      
+      .feature {
+        padding: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <header id="main-header">
+      <div class="container">
+        <h1>نظام إدارة المدرسة</h1>
+        <nav id="main-nav">
+          <ul id="nav-menu">
+            <li><a href="#" id="home-link" class="active">الرئيسية</a></li>
+            <li><a href="#" id="login-link">تسجيل الدخول</a></li>
+            <li class="hidden" id="dashboard-li"><a href="#" id="dashboard-link">لوحة التحكم</a></li>
+            <li class="hidden" id="logout-li"><a href="#" id="logout-link">تسجيل الخروج</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <main id="main-content">
+      <section id="home-section" class="section active">
+        <div class="container">
+          <h2>مرحباً بكم في نظام إدارة المدرسة</h2>
+          <p>نظام بسيط لإدارة المدارس الصغيرة يربط بين المعلمين والطلاب وأولياء الأمور تحت إشراف المدير.</p>
+          <div class="features">
+            <div class="feature">
+              <h3>المعلمين</h3>
+              <p>إدارة الصفوف، تسجيل الحضور، إضافة الدرجات، والتواصل مع أولياء الأمور.</p>
+            </div>
+            <div class="feature">
+              <h3>الطلاب</h3>
+              <p>عرض الدرجات، الاطلاع على سجل الحضور، وعرض الملاحظات.</p>
+            </div>
+            <div class="feature">
+              <h3>أولياء الأمور</h3>
+              <p>متابعة أداء الأبناء، الاطلاع على الدرجات والحضور، والتواصل مع المعلمين.</p>
+            </div>
+            <div class="feature">
+              <h3>المدير</h3>
+              <p>إدارة المستخدمين، الإشراف على العملية التعليمية، وتقارير شاملة.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="login-section" class="section">
+        <div class="container">
+          <div class="form-container">
+            <h2>تسجيل الدخول</h2>
+            <form id="login-form">
+              <div class="form-group">
+                <label for="username">اسم المستخدم</label>
+                <input type="text" id="username" name="username" required>
+              </div>
+              <div class="form-group">
+                <label for="password">كلمة المرور</label>
+                <input type="password" id="password" name="password" required>
+              </div>
+              <div class="form-group">
+                <button type="submit" class="btn">تسجيل الدخول</button>
+              </div>
+              <div id="login-error" class="hidden" style="color: red; margin-top: 10px; text-align: center;"></div>
+              <div style="margin-top: 20px; font-size: 14px; text-align: center;">
+                <p><strong>بيانات الدخول للتجربة:</strong></p>
+                <p>المدير: admin / admin123</p>
+                <p>المعلم: teacher1 / teacher123</p>
+                <p>الطالب: student1 / student123</p>
+                <p>ولي الأمر: parent1 / parent123</p>
+              </div>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      <!-- Admin Dashboard -->
+      <section id="admin-dashboard" class="section dashboard">
+        <div class="container">
+          <h2>لوحة تحكم المدير</h2>
+          <div class="dashboard-menu">
+            <button class="dashboard-btn active" data-section="users-section">المستخدمين</button>
+            <button class="dashboard-btn" data-section="reports-section">التقارير</button>
+            <button class="dashboard-btn" data-section="settings-section">الإعدادات</button>
+          </div>
+
+          <div id="users-section" class="dashboard-section active">
+            <h3>إدارة المستخدمين</h3>
+            <div class="action-bar">
+              <button id="add-user-btn" class="btn">إضافة مستخدم جديد</button>
+              <select id="filter-users">
+                <option value="all">جميع المستخدمين</option>
+                <option value="admin">المدراء</option>
+                <option value="teacher">المعلمين</option>
+                <option value="student">الطلاب</option>
+                <option value="parent">أولياء الأمور</option>
+              </select>
+            </div>
+            <div class="table-container">
+              <table id="users-table">
+                <thead>
+                  <tr>
+                    <th>الاسم</th>
+                    <th>اسم المستخدم</th>
+                    <th>البريد الإلكتروني</th>
+                    <th>الدور</th>
+                    <th>الإجراءات</th>
+                  </tr>
+                </thead>
+                <tbody id="users-table-body">
+                  <!-- سيتم تحميل المستخدمين هنا -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+          
+          <div id="reports-section" class="dashboard-section">
+            <h3>التقارير</h3>
+            <p>قسم التقارير قيد التطوير</p>
+          </div>
+          
+          <div id="settings-section" class="dashboard-section">
+            <h3>الإعدادات</h3>
+            <p>قسم الإعدادات قيد التطوير</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Teacher Dashboard -->
+      <section id="teacher-dashboard" class="section dashboard">
+        <div class="container">
+          <h2>لوحة تحكم المعلم</h2>
+          <div class="dashboard-menu">
+            <button class="dashboard-btn active" data-section="students-section">الطلاب</button>
+            <button class="dashboard-btn" data-section="attendance-section">الحضور</button>
+            <button class="dashboard-btn" data-section="grades-section">الدرجات</button>
+            <button class="dashboard-btn" data-section="messages-section">الرسائل</button>
+          </div>
+
+          <div id="students-section" class="dashboard-section active">
+            <h3>قائمة الطلاب</h3>
+            <div class="table-container">
+              <table id="students-table">
+                <thead>
+                  <tr>
+                    <th>الاسم</th>
+                    <th>الصف</th>
+                    <th>الفصل</th>
+                    <th>الإجراءات</th>
+                  </tr>
+                </thead>
+                <tbody id="students-table-body">
+                  <!-- سيتم تحميل الطلاب هنا -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+          
+          <div id="attendance-section" class="dashboard-section">
+            <h3>تسجيل الحضور</h3>
+            <p>قسم تسجيل الحضور قيد التطوير</p>
+          </div>
+          
+          <div id="grades-section" class="dashboard-section">
+            <h3>إدارة الدرجات</h3>
+            <p>قسم إدارة الدرجات قيد التطوير</p>
+          </div>
+          
+          <div id="messages-section" class="dashboard-section">
+            <h3>الرسائل</h3>
+            <p>قسم الرسائل قيد التطوير</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Student Dashboard -->
+      <section id="student-dashboard" class="section dashboard">
+        <div class="container">
+          <h2>بوابة الطالب</h2>
+          <div class="dashboard-menu">
+            <button class="dashboard-btn active" data-section="profile-section">الملف الشخصي</button>
+            <button class="dashboard-btn" data-section="student-grades-section">الدرجات</button>
+            <button class="dashboard-btn" data-section="student-attendance-section">الحضور</button>
+          </div>
+
+          <div id="profile-section" class="dashboard-section active">
+            <h3>الملف الشخصي</h3>
+            <div id="student-profile">
+              <!-- معلومات الطالب -->
+              <div class="profile-info"><strong>الاسم:</strong> محمد الطالب</div>
+              <div class="profile-info"><strong>البريد الإلكتروني:</strong> student1@school.com</div>
+              <div class="profile-info"><strong>الصف:</strong> الصف التاسع</div>
+              <div class="profile-info"><strong>الفصل:</strong> أ</div>
+              <div class="profile-info"><strong>ولي الأمر:</strong> خالد ولي الأمر</div>
+            </div>
+          </div>
+          
+          <div id="student-grades-section" class="dashboard-section">
+            <h3>الدرجات</h3>
+            <p>قسم الدرجات قيد التطوير</p>
+          </div>
+          
+          <div id="student-attendance-section" class="dashboard-section">
+            <h3>سجل الحضور</h3>
+            <p>قسم سجل الحضور قيد التطوير</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Parent Dashboard -->
+      <section id="parent-dashboard" class="section dashboard">
+        <div class="container">
+          <h2>بوابة ولي الأمر</h2>
+          <div class="dashboard-menu">
+            <button class="dashboard-btn active" data-section="children-section">الأبناء</button>
+            <button class="dashboard-btn" data-section="parent-messages-section">الرسائل</button>
+          </div>
+
+          <div id="children-section" class="dashboard-section active">
+            <h3>الأبناء</h3>
+            <div id="children-list">
+              <!-- قائمة الأبناء -->
+              <div class="child-card" data-id="1">
+                <h4>محمد الطالب</h4>
+                <div>الصف: الصف التاسع</div>
+                <div>الفصل: أ</div>
+              </div>
+            </div>
+          </div>
+          
+          <div id="parent-messages-section" class="dashboard-section">
+            <h3>الرسائل</h3>
+            <p>قسم الرسائل قيد التطوير</p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer id="main-footer">
+      <div class="container">
+        <p>&copy; 2024 نظام إدارة المدرسة</p>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    // بيانات المستخدمين (محاكاة)
+    const users = [
+      {
+        id: '1',
+        username: 'admin',
+        password: 'admin123',
+        name: 'مدير النظام',
+        role: 'admin',
+        email: 'admin@school.com',
+        phone: '123456789'
+      },
+      {
+        id: '2',
+        username: 'teacher1',
+        password: 'teacher123',
+        name: 'أحمد المعلم',
+        role: 'teacher',
+        email: 'teacher1@school.com',
+        phone: '987654321'
+      },
+      {
+        id: '3',
+        username: 'student1',
+        password: 'student123',
+        name: 'محمد الطالب',
+        role: 'student',
+        email: 'student1@school.com',
+        phone: '555555555'
+      },
+      {
+        id: '4',
+        username: 'parent1',
+        password: 'parent123',
+        name: 'خالد ولي الأمر',
+        role: 'parent',
+        email: 'parent1@example.com',
+        phone: '111222333'
+      }
+    ];
+
+    // بيانات الطلاب (محاكاة)
+    const students = [
+      {
+        _id: '1',
+        user: {
+          id: '3',
+          name: 'محمد الطالب',
+          email: 'student1@school.com'
+        },
+        grade: 'الصف التاسع',
+        classroom: 'أ',
+        parent: {
+          id: '4',
+          name: 'خالد ولي الأمر'
+        }
+      }
+    ];
+
+    // العناصر DOM
+    const app = document.getElementById('app');
+    const mainContent = document.getElementById('main-content');
+    const sections = document.querySelectorAll('.section');
+    const navMenu = document.getElementById('nav-menu');
+    const homeLink = document.getElementById('home-link');
+    const loginLink = document.getElementById('login-link');
+    const dashboardLi = document.getElementById('dashboard-li');
+    const dashboardLink = document.getElementById('dashboard-link');
+    const logoutLi = document.getElementById('logout-li');
+    const logoutLink = document.getElementById('logout-link');
+    const loginForm = document.getElementById('login-form');
+    const loginError = document.getElementById('login-error');
+
+    // أقسام لوحة التحكم
+    const dashboardBtns = document.querySelectorAll('.dashboard-btn');
+    const dashboardSections = document.querySelectorAll('.dashboard-section');
+
+    // حالة المصادقة
+    let currentUser = null;
+
+    // تهيئة التطبيق
+    function init() {
+      // إعداد أحداث المستمع
+      setupEventListeners();
+      
+      // عرض قسم الصفحة الرئيسية في البداية
+      showSection('home-section');
+    }
+
+    // تحديث واجهة المستخدم استنادًا إلى حالة المصادقة
+    function updateUIForAuthenticatedUser() {
+      if (currentUser) {
+        // تحديث التنقل
+        loginLink.style.display = 'none';
+        dashboardLi.classList.remove('hidden');
+        logoutLi.classList.remove('hidden');
+        
+        // عرض لوحة التحكم المناسبة بناءً على دور المستخدم
+        showDashboardForRole(currentUser.role);
+      } else {
+        // إعادة تعيين التنقل
+        loginLink.style.display = 'block';
+        dashboardLi.classList.add('hidden');
+        logoutLi.classList.add('hidden');
+        
+        // عرض الصفحة الرئيسية
+        showSection('home-section');
+        updateActiveNavLink(homeLink);
+      }
+    }
+
+    // عرض لوحة التحكم بناءً على دور المستخدم
+    function showDashboardForRole(role) {
+      hideAllSections();
+      
+      switch (role) {
+        case 'admin':
+          document.getElementById('admin-dashboard').classList.add('active');
+          loadUsers();
+          break;
+        case 'teacher':
+          document.getElementById('teacher-dashboard').classList.add('active');
+          loadStudents();
+          break;
+        case 'student':
+          document.getElementById('student-dashboard').classList.add('active');
+          break;
+        case 'parent':
+          document.getElementById('parent-dashboard').classList.add('active');
+          break;
+        default:
+          document.getElementById('home-section').classList.add('active');
+      }
+    }
+
+    // إعداد أحداث المستمع
+    function setupEventListeners() {
+      // روابط التنقل
+      homeLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        showSection('home-section');
+        updateActiveNavLink(homeLink);
+      });
+      
+      loginLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        showSection('login-section');
+        updateActiveNavLink(loginLink);
+      });
+      
+      dashboardLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        showDashboardForRole(currentUser.role);
+        updateActiveNavLink(dashboardLink);
+      });
+      
+      logoutLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        logout();
+      });
+      
+      // نموذج تسجيل الدخول
+      loginForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        login();
+      });
+      
+      // أزرار قسم لوحة التحكم
+      dashboardBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const section = btn.getAttribute('data-section');
+          
+          // تحديث الزر النشط
+          dashboardBtns.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          
+          // عرض القسم المقابل
+          dashboardSections.forEach(s => s.classList.remove('active'));
+          document.getElementById(section).classList.add('active');
+        });
+      });
+    }
+
+    // وظيفة تسجيل الدخول
+    function login() {
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+      
+      const user = users.find(u => u.username === username && u.password === password);
+      
+      if (user) {
+        currentUser = {
+          id: user.id,
+          username: user.username,
+          name: user.name,
+          role: user.role,
+          email: user.email
+        };
+        
+        loginError.classList.add('hidden');
+        updateUIForAuthenticatedUser();
+      } else {
+        loginError.textContent = 'اسم المستخدم أو كلمة المرور غير صحيحة';
+        loginError.classList.remove('hidden');
+      }
+    }
+
+    // وظيفة تسجيل الخروج
+    function logout() {
+      currentUser = null;
+      updateUIForAuthenticatedUser();
+    }
+
+    // تحميل المستخدمين (للمدير)
+    function loadUsers() {
+      const usersTableBody = document.getElementById('users-table-body');
+      usersTableBody.innerHTML = '';
+      
+      users.forEach(user => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${user.name}</td>
+          <td>${user.username}</td>
+          <td>${user.email}</td>
+          <td>${translateRole(user.role)}</td>
+          <td>
+            <button class="btn-edit" data-id="${user.id}">تعديل</button>
+            <button class="btn-delete" data-id="${user.id}">حذف</button>
+          </td>
+        `;
+        usersTableBody.appendChild(tr);
+      });
+    }
+
+    // تحميل الطلاب (للمعلم)
+    function loadStudents() {
+      const studentsTableBody = document.getElementById('students-table-body');
+      studentsTableBody.innerHTML = '';
+      
+      students.forEach(student => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${student.user.name}</td>
+          <td>${student.grade}</td>
+          <td>${student.classroom}</td>
+          <td>
+            <button class="btn-view-grades" data-id="${student._id}">الدرجات</button>
+            <button class="btn-view-attendance" data-id="${student._id}">الحضور</button>
+            <button class="btn-message-parent" data-id="${student.parent.id}">مراسلة ولي الأمر</button>
+          </td>
+        `;
+        studentsTableBody.appendChild(tr);
+      });
+    }
+
+    // وظائف مساعدة
+    function showSection(sectionId) {
+      hideAllSections();
+      document.getElementById(sectionId).classList.add('active');
+    }
+
+    function hideAllSections() {
+      sections.forEach(section => section.classList.remove('active'));
+    }
+
+    function updateActiveNavLink(activeLink) {
+      document.querySelectorAll('#main-nav a').forEach(link => link.classList.remove('active'));
+      activeLink.classList.add('active');
+    }
+
+    function translateRole(role) {
+      const roles = {
+        admin: 'مدير',
+        teacher: 'معلم',
+        student: 'طالب',
+        parent: 'ولي أمر'
+      };
+      
+      return roles[role] || role;
+    }
+
+    // تهيئة التطبيق عند تحميل المستند
+    document.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>

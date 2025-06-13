@@ -1,0 +1,1322 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>نظام إدارة المدرسة - الجدول الدراسي</title>
+  
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <style>
+    /* General Styles */
+    :root {
+      --primary-color: #3498db;
+      --primary-color-dark: #2980b9;
+      --secondary-color: #2c3e50;
+      --bg-color: #f8f9fa;
+      --text-color: #333;
+      --border-color: #ddd;
+      --success-color: #2ecc71;
+      --warning-color: #f39c12;
+      --danger-color: #e74c3c;
+      --light-color: #f8f9fa;
+      --dark-color: #343a40;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      line-height: 1.6;
+      direction: rtl;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 15px;
+    }
+    
+    header {
+      background-color: #fff;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      padding: 15px 0;
+    }
+    
+    header .container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    header h1 {
+      color: var(--primary-color);
+    }
+    
+    nav ul {
+      display: flex;
+      list-style: none;
+    }
+    
+    nav li {
+      margin-right: 20px;
+    }
+    
+    nav a {
+      color: var(--text-color);
+      text-decoration: none;
+      font-weight: 500;
+    }
+    
+    nav a.active {
+      color: var(--primary-color);
+    }
+    
+    main {
+      padding: 30px 0;
+    }
+    
+    .section-title {
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border-color);
+      color: var(--secondary-color);
+    }
+    
+    .card {
+      background-color: #fff;
+      border-radius: 5px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      margin-bottom: 20px;
+      overflow: hidden;
+    }
+    
+    .card-header {
+      padding: 15px;
+      background-color: var(--primary-color);
+      color: #fff;
+    }
+    
+    .card-body {
+      padding: 15px;
+    }
+    
+    .card-footer {
+      padding: 15px;
+      background-color: var(--light-color);
+      border-top: 1px solid var(--border-color);
+    }
+    
+    .btn {
+      display: inline-block;
+      background-color: var(--primary-color);
+      color: #fff;
+      padding: 8px 15px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      text-decoration: none;
+      font-size: 14px;
+      transition: background-color 0.3s;
+    }
+    
+    .btn:hover {
+      background-color: var(--primary-color-dark);
+    }
+    
+    .btn-success {
+      background-color: var(--success-color);
+    }
+    
+    .btn-warning {
+      background-color: var(--warning-color);
+    }
+    
+    .btn-danger {
+      background-color: var(--danger-color);
+    }
+    
+    .tabs {
+      display: flex;
+      margin-bottom: 20px;
+      border-bottom: 1px solid var(--border-color);
+    }
+    
+    .tab {
+      padding: 10px 20px;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+    }
+    
+    .tab.active {
+      border-bottom-color: var(--primary-color);
+      color: var(--primary-color);
+      font-weight: 500;
+    }
+    
+    .tab-content {
+      display: none;
+    }
+    
+    .tab-content.active {
+      display: block;
+    }
+    
+    .form-group {
+      margin-bottom: 15px;
+    }
+    
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: 500;
+    }
+    
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      font-size: 14px;
+    }
+    
+    /* Schedule System Styles */
+    .schedule-container {
+      margin-bottom: 30px;
+    }
+    
+    .schedule-filters {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    
+    .schedule-filters select {
+      padding: 8px 15px;
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      background-color: #fff;
+    }
+    
+    .schedule-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+      background-color: #fff;
+      border-radius: 5px;
+      overflow: hidden;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    
+    .schedule-table th,
+    .schedule-table td {
+      border: 1px solid var(--border-color);
+      padding: 12px;
+      text-align: center;
+    }
+    
+    .schedule-table th {
+      background-color: var(--secondary-color);
+      color: #fff;
+      font-weight: 500;
+    }
+    
+    .schedule-table .time-slot {
+      background-color: var(--light-color);
+      font-weight: 500;
+    }
+    
+    .schedule-lesson {
+      background-color: var(--primary-color);
+      color: #fff;
+      padding: 8px;
+      border-radius: 4px;
+      margin-bottom: 5px;
+      position: relative;
+    }
+    
+    .schedule-lesson.math {
+      background-color: #3498db;
+    }
+    
+    .schedule-lesson.science {
+      background-color: #2ecc71;
+    }
+    
+    .schedule-lesson.arabic {
+      background-color: #e74c3c;
+    }
+    
+    .schedule-lesson.english {
+      background-color: #9b59b6;
+    }
+    
+    .schedule-lesson.social {
+      background-color: #f39c12;
+    }
+    
+    .schedule-lesson.islamic {
+      background-color: #1abc9c;
+    }
+    
+    .schedule-lesson.computer {
+      background-color: #34495e;
+    }
+    
+    .schedule-lesson.art {
+      background-color: #d35400;
+    }
+    
+    .schedule-lesson.pe {
+      background-color: #27ae60;
+    }
+    
+    .lesson-subject {
+      font-weight: 500;
+      margin-bottom: 3px;
+    }
+    
+    .lesson-room {
+      font-size: 12px;
+      opacity: 0.9;
+    }
+    
+    .lesson-teacher {
+      font-size: 12px;
+      opacity: 0.9;
+    }
+    
+    .lesson-actions {
+      position: absolute;
+      top: 5px;
+      left: 5px;
+      display: none;
+    }
+    
+    .schedule-lesson:hover .lesson-actions {
+      display: block;
+    }
+    
+    .lesson-actions button {
+      background: none;
+      border: none;
+      color: #fff;
+      cursor: pointer;
+      font-size: 12px;
+      padding: 2px;
+    }
+    
+    .empty-slot {
+      padding: 10px;
+      background-color: #f8f9fa;
+      border-radius: 4px;
+      color: #aaa;
+      font-style: italic;
+    }
+    
+    /* Schedule Changes */
+    .schedule-changes {
+      margin-top: 30px;
+    }
+    
+    .change-item {
+      background-color: #fff;
+      border-radius: 5px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      margin-bottom: 15px;
+      padding: 15px;
+      border-right: 4px solid var(--warning-color);
+    }
+    
+    .change-item.cancel {
+      border-right-color: var(--danger-color);
+    }
+    
+    .change-item.reschedule {
+      border-right-color: var(--warning-color);
+    }
+    
+    .change-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+    
+    .change-title {
+      font-weight: 600;
+      color: var(--dark-color);
+    }
+    
+    .change-date {
+      color: #666;
+    }
+    
+    .change-details {
+      margin-bottom: 10px;
+    }
+    
+    .change-reason {
+      background-color: var(--light-color);
+      padding: 10px;
+      border-radius: 4px;
+      margin-top: 10px;
+      font-style: italic;
+    }
+    
+    /* Add Lesson Form */
+    .add-lesson-form {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 5px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      margin-bottom: 20px;
+    }
+    
+    .form-row {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 15px;
+    }
+    
+    .form-col {
+      flex: 1;
+    }
+    
+    /* Print Styles */
+    .print-actions {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 20px;
+    }
+    
+    @media print {
+      header, 
+      .tabs,
+      .schedule-filters,
+      .btn,
+      .lesson-actions,
+      footer {
+        display: none !important;
+      }
+      
+      body {
+        background-color: #fff;
+      }
+      
+      .container {
+        width: 100%;
+        max-width: 100%;
+      }
+      
+      .schedule-table {
+        box-shadow: none;
+        border: 1px solid #000;
+      }
+      
+      .schedule-table th,
+      .schedule-table td {
+        border: 1px solid #000;
+      }
+    }
+    
+    /* Media Queries */
+    @media (max-width: 768px) {
+      .schedule-filters {
+        flex-direction: column;
+      }
+      
+      .schedule-table {
+        font-size: 12px;
+      }
+      
+      .schedule-table th,
+      .schedule-table td {
+        padding: 8px 5px;
+      }
+      
+      .form-row {
+        flex-direction: column;
+        gap: 0;
+      }
+      
+      .lesson-subject {
+        font-size: 12px;
+      }
+      
+      .lesson-room,
+      .lesson-teacher {
+        font-size: 10px;
+      }
+    }
+    
+    /* Responsive Table for Small Screens */
+    @media (max-width: 576px) {
+      .schedule-table-responsive {
+        overflow-x: auto;
+      }
+      
+      .schedule-table {
+        min-width: 800px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <h1>نظام إدارة المدرسة</h1>
+      <nav>
+        <ul>
+          <li><a href="#">الرئيسية</a></li>
+          <li><a href="#">الواجبات المنزلية</a></li>
+          <li><a href="#">المراسلات</a></li>
+          <li><a href="#" class="active">الجدول الدراسي</a></li>
+          <li><a href="#">المكتبة التعليمية</a></li>
+          <li><a href="#">الإعدادات</a></li>
+          <li><a href="#">تسجيل الخروج</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+  
+  <main>
+    <div class="container">
+      <h2 class="section-title">نظام الجدول الدراسي</h2>
+      
+      <div class="tabs">
+        <div class="tab active" data-tab="view-schedule">عرض الجدول</div>
+        <div class="tab" data-tab="manage-schedule">إدارة الجدول</div>
+        <div class="tab" data-tab="schedule-changes">تغييرات الجدول</div>
+      </div>
+      
+      <!-- عرض الجدول -->
+      <div class="tab-content active" id="view-schedule">
+        <div class="schedule-container">
+          <div class="schedule-filters">
+            <select id="view-type">
+              <option value="classroom">جدول الفصل</option>
+              <option value="teacher">جدول المعلم</option>
+              <option value="room">جدول القاعة</option>
+              <option value="student">جدولي الدراسي</option>
+            </select>
+            
+            <select id="classroom-select">
+              <option value="cls1">الصف التاسع - أ</option>
+              <option value="cls2">الصف التاسع - ب</option>
+              <option value="cls3">الصف التاسع - ج</option>
+              <option value="cls4">الصف الثامن - أ</option>
+              <option value="cls5">الصف الثامن - ب</option>
+            </select>
+            
+            <select id="teacher-select" style="display: none;">
+              <option value="2">أحمد المعلم</option>
+              <!-- المزيد من المعلمين -->
+            </select>
+            
+            <select id="room-select" style="display: none;">
+              <option value="room1">قاعة 101</option>
+              <option value="room2">قاعة 102</option>
+              <option value="room3">قاعة 103</option>
+              <option value="room4">مختبر العلوم</option>
+              <option value="room5">مختبر الحاسوب</option>
+              <option value="room6">قاعة 201</option>
+              <option value="room7">قاعة الفنون</option>
+              <option value="room8">الملعب</option>
+            </select>
+            
+            <select id="semester-select">
+              <option value="الفصل الأول">الفصل الدراسي الأول</option>
+              <option value="الفصل الثاني">الفصل الدراسي الثاني</option>
+            </select>
+            
+            <button id="apply-filters" class="btn">تطبيق</button>
+          </div>
+          
+          <div class="print-actions">
+            <button id="print-schedule" class="btn">
+              <i class="fas fa-print"></i> طباعة الجدول
+            </button>
+            <button id="export-pdf" class="btn" style="margin-right: 10px;">
+              <i class="fas fa-file-pdf"></i> تصدير PDF
+            </button>
+          </div>
+          
+          <div class="schedule-table-responsive">
+            <table class="schedule-table">
+              <thead>
+                <tr>
+                  <th>الوقت / اليوم</th>
+                  <th>الأحد</th>
+                  <th>الاثنين</th>
+                  <th>الثلاثاء</th>
+                  <th>الأربعاء</th>
+                  <th>الخميس</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- الحصة الأولى -->
+                <tr>
+                  <td class="time-slot">08:00 - 08:45<br>الحصة الأولى</td>
+                  <td>
+                    <div class="schedule-lesson math">
+                      <div class="lesson-subject">الرياضيات</div>
+                      <div class="lesson-room">قاعة 101</div>
+                      <div class="lesson-teacher">أحمد المعلم</div>
+                      <div class="lesson-actions">
+                        <button title="تعديل"><i class="fas fa-edit"></i></button>
+                        <button title="إلغاء"><i class="fas fa-times"></i></button>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="schedule-lesson math">
+                      <div class="lesson-subject">الرياضيات</div>
+                      <div class="lesson-room">قاعة 101</div>
+                      <div class="lesson-teacher">أحمد المعلم</div>
+                      <div class="lesson-actions">
+                        <button title="تعديل"><i class="fas fa-edit"></i></button>
+                        <button title="إلغاء"><i class="fas fa-times"></i></button>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="schedule-lesson arabic">
+                      <div class="lesson-subject">اللغة العربية</div>
+                      <div class="lesson-room">قاعة 101</div>
+                      <div class="lesson-teacher">أحمد المعلم</div>
+                      <div class="lesson-actions">
+                        <button title="تعديل"><i class="fas fa-edit"></i></button>
+                        <button title="إلغاء"><i class="fas fa-times"></i></button>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="schedule-lesson science">
+                      <div class="lesson-subject">العلوم</div>
+                      <div class="lesson-room">مختبر العلوم</div>
+                      <div class="lesson-teacher">أحمد المعلم</div>
+                      <div class="lesson-actions">
+                        <button title="تعديل"><i class="fas fa-edit"></i></button>
+                        <button title="إلغاء"><i class="fas fa-times"></i></button>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="schedule-lesson english">
+                      <div class="lesson-subject">اللغة الإنجليزية</div>
+                      <div class="lesson-room">قاعة 101</div>
+                      <div class="lesson-teacher">أحمد المعلم</div>
+                      <div class="lesson-actions">
+                        <button title="تعديل"><i class="fas fa-edit"></i></button>
+                        <button title="إلغاء"><i class="fas fa-times"></i></button>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+                
+                <!-- الحصة الثانية -->
+                <tr>
+                  <td class="time-slot">08:50 - 09:35<br>الحصة الثانية</td>
+                  <td>
+                    <div class="schedule-lesson science">
+                      <div class="lesson-subject">العلوم</div>
+                      <div class="lesson-room">مختبر العلوم</div>
+                      <div class="lesson-teacher">أحمد المعلم</div>
+                      <div class="lesson-actions">
+                        <button title="تعديل"><i class="fas fa-edit"></i></button>
+                        <button title="إلغاء"><i class="fas fa-times"></i></button>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="schedule-lesson english">
+                      <div class="lesson-subject">اللغة الإنجليزية</div>
+                      <div class="lesson-room">قاعة 101</div>
+                      <div class="lesson-teacher">أحمد المعلم</div>
+                      <div class="lesson-actions">
+                        <button title="تعديل"><i class="fas fa-edit"></i></button>
+                        <button title="إلغاء"><i class="fas fa-times"></i></button>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="schedule-lesson social">
+                      <div class="lesson-subject">الدراسات الاجتماعية</div>
+                      <div class="lesson-room">قاعة 101</div>
+                      <div class="lesson-teacher">أحمد المعلم</div>
+                      <div class="lesson-actions">
+                        <button title="تعديل"><i class="fas fa-edit"></i></button>
+                        <button title="إلغاء"><i class="fas fa-times"></i></button>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="schedule-lesson english">
+                      <div class="lesson-subject">اللغة الإنجليزية</div>
+                      <div class="lesson-room">قاعة 101</div>
+                      <div class="lesson-teacher">أحمد المعلم</div>
+                      <div class="lesson-actions">
+                        <button title="تعديل"><i class="fas fa-edit"></i></button>
+                        <button title="إلغاء"><i class="fas fa-times"></i></button>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="schedule-lesson math">
+                      <div class="lesson-subject">الرياضيات</div>
+                      <div class="lesson-room">قاعة 101</div>
+                      <div class="lesson-teacher">أحمد المعلم</div>
+                      <div class="lesson-actions">
+                        <button title="تعديل"><i class="fas fa-edit"></i></button>
+                        <button title="إلغاء"><i class="fas fa-times"></i></button>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+                
+                <!-- الحصة الثالثة -->
+                <tr>
+                  <td class="time-slot">09:40 - 10:25<br>الحصة الثالثة</td>
+                  <td>
+                    <div class="schedule-lesson arabic">
+                      <div class="lesson-subject">اللغة العربية</div>
+                      <div class="lesson-room">قاعة 101</div>
+                      <div class="lesson-teacher">أحمد المعلم</div>
+                      <div class="lesson-actions">
+                        <button title="تعديل"><i class="fas fa-edit"></i></button>
+                        <button title="إلغاء"><i class="fas fa-times"></i></button>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="schedule-lesson computer">
+                      <div class="lesson-subject">الحاسوب</div>
+                      <div class="lesson-room">مختبر الحاسوب</div>
+                      <div class="lesson-teacher">أحمد المعلم</div>
+                      <div class="lesson-actions">
+                        <button title="تعديل"><i class="fas fa-edit"></i></button>
+                        <button title="إلغاء"><i class="fas fa-times"></i></button>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="schedule-lesson math">
+                      <div class="lesson-subject">الرياضيات</div>
+                      <div class="lesson-room">قاعة 101</div>
+                      <div class="lesson-teacher">أحمد المعلم</div>
+                      <div class="lesson-actions">
+                        <button title="تعديل"><i class="fas fa-edit"></i></button>
+                        <button title="إلغاء"><i class="fas fa-times"></i></button>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="schedule-lesson arabic">
+                      <div class="lesson-subject">اللغة العربية</div>
+                      <div class="lesson-room">قاعة 101</div>
+                      <div class="lesson-teacher">أحمد المعلم</div>
+                      <div class="lesson-actions">
+                        <button title="تعديل"><i class="fas fa-edit"></i></button>
+                        <button title="إلغاء"><i class="fas fa-times"></i></button>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="schedule-lesson science">
+                      <div class="lesson-subject">العلوم</div>
+                      <div class="lesson-room">مختبر العلوم</div>
+                      <div class="lesson-teacher">أحمد المعلم</div>
+                      <div class="lesson-actions">
+                        <button title="تعديل"><i class="fas fa-edit"></i></button>
+                        <button title="إلغاء"><i class="fas fa-times"></i></button>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+                
+                <!-- استراحة -->
+                <tr>
+                  <td class="time-slot">10:25 - 10:40<br>استراحة</td>
+                  <td colspan="5" style="text-align: center; background-color: #f8f9fa;">
+                    <strong>استراحة</strong>
+                  </td>
+                </tr>
+                
+                <!-- الحصة الرابعة -->
+                <tr>
+                  <td class="time-slot">10:40 - 11:25<br>الحصة الرابعة</td>
+                  <td>
+                    <div class="schedule-lesson islamic">
+                      <div class="lesson-subject">التربية الإسلامية</div>
+                      <div class="lesson-room">قاعة 101</div>
+                      <div class="lesson-teacher">أحمد المعلم</div>
+                      <div class="lesson-actions">
+                        <button title="تعديل"><i class="fas fa-edit"></i></button>
+                        <button title="إلغاء"><i class="fas fa-times"></i></button>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="schedule-lesson social">
+                      <div class="lesson-subject">الدراسات الاجتماعية</div>
+                      <div class="lesson-room">قاعة 101</div>
+                      <div class="lesson-teacher">أحمد المعلم</div>
+                      <div class="lesson-actions">
+                        <button title="تعديل"><i class="fas fa-edit"></i></button>
+                        <button title="إلغاء"><i class="fas fa-times"></i></button>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="schedule-lesson english">
+                      <div class="lesson-subject">اللغة الإنجليزية</div>
+                      <div class="lesson-room">قاعة 101</div>
+                      <div class="lesson-teacher">أحمد المعلم</div>
+                      <div class="lesson-actions">
+                        <button title="تعديل"><i class="fas fa-edit"></i></button>
+                        <button title="إلغاء"><i class="fas fa-times"></i></button>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="schedule-lesson islamic">
+                      <div class="lesson-subject">التربية الإسلامية</div>
+                      <div class="lesson-room">قاعة 101</div>
+                      <div class="lesson-teacher">أحمد المعلم</div>
+                      <div class="lesson-actions">
+                        <button title="تعديل"><i class="fas fa-edit"></i></button>
+                        <button title="إلغاء"><i class="fas fa-times"></i></button>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="schedule-lesson arabic">
+                      <div class="lesson-subject">اللغة العربية</div>
+                      <div class="lesson-room">قاعة 101</div>
+                      <div class="lesson-teacher">أحمد المعلم</div>
+                      <div class="lesson-actions">
+                        <button title="تعديل"><i class="fas fa-edit"></i></button>
+                        <button title="إلغاء"><i class="fas fa-times"></i></button>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+                
+                <!-- الحصة الخامسة -->
+                <tr>
+                  <td class="time-slot">11:30 - 12:15<br>الحصة الخامسة</td>
+                  <td>
+                    <div class="schedule-lesson art">
+                      <div class="lesson-subject">التربية الفنية</div>
+                      <div class="lesson-room">قاعة الفنون</div>
+                      <div class="lesson-teacher">أحمد المعلم</div>
+                      <div class="lesson-actions">
+                        <button title="تعديل"><i class="fas fa-edit"></i></button>
+                        <button title="إلغاء"><i class="fas fa-times"></i></button>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="schedule-lesson science">
+                      <div class="lesson-subject">العلوم</div>
+                      <div class="lesson-room">مختبر العلوم</div>
+                      <div class="lesson-teacher">أحمد المعلم</div>
+                      <div class="lesson-actions">
+                        <button title="تعديل"><i class="fas fa-edit"></i></button>
+                        <button title="إلغاء"><i class="fas fa-times"></i></button>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="schedule-lesson pe">
+                      <div class="lesson-subject">التربية البدنية</div>
+                      <div class="lesson-room">الملعب</div>
+                      <div class="lesson-teacher">أحمد المعلم</div>
+                      <div class="lesson-actions">
+                        <button title="تعديل"><i class="fas fa-edit"></i></button>
+                        <button title="إلغاء"><i class="fas fa-times"></i></button>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="schedule-lesson computer">
+                      <div class="lesson-subject">الحاسوب</div>
+                      <div class="lesson-room">مختبر الحاسوب</div>
+                      <div class="lesson-teacher">أحمد المعلم</div>
+                      <div class="lesson-actions">
+                        <button title="تعديل"><i class="fas fa-edit"></i></button>
+                        <button title="إلغاء"><i class="fas fa-times"></i></button>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="schedule-lesson social">
+                      <div class="lesson-subject">الدراسات الاجتماعية</div>
+                      <div class="lesson-room">قاعة 101</div>
+                      <div class="lesson-teacher">أحمد المعلم</div>
+                      <div class="lesson-actions">
+                        <button title="تعديل"><i class="fas fa-edit"></i></button>
+                        <button title="إلغاء"><i class="fas fa-times"></i></button>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+                
+                <!-- الحصة السادسة -->
+                <tr>
+                  <td class="time-slot">12:20 - 13:05<br>الحصة السادسة</td>
+                  <td>
+                    <div class="schedule-lesson pe">
+                      <div class="lesson-subject">التربية البدنية</div>
+                      <div class="lesson-room">الملعب</div>
+                      <div class="lesson-teacher">أحمد المعلم</div>
+                      <div class="lesson-actions">
+                        <button title="تعديل"><i class="fas fa-edit"></i></button>
+                        <button title="إلغاء"><i class="fas fa-times"></i></button>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="schedule-lesson art">
+                      <div class="lesson-subject">التربية الفنية</div>
+                      <div class="lesson-room">قاعة الفنون</div>
+                      <div class="lesson-teacher">أحمد المعلم</div>
+                      <div class="lesson-actions">
+                        <button title="تعديل"><i class="fas fa-edit"></i></button>
+                        <button title="إلغاء"><i class="fas fa-times"></i></button>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="schedule-lesson computer">
+                      <div class="lesson-subject">الحاسوب</div>
+                      <div class="lesson-room">مختبر الحاسوب</div>
+                      <div class="lesson-teacher">أحمد المعلم</div>
+                      <div class="lesson-actions">
+                        <button title="تعديل"><i class="fas fa-edit"></i></button>
+                        <button title="إلغاء"><i class="fas fa-times"></i></button>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="schedule-lesson pe">
+                      <div class="lesson-subject">التربية البدنية</div>
+                      <div class="lesson-room">الملعب</div>
+                      <div class="lesson-teacher">أحمد المعلم</div>
+                      <div class="lesson-actions">
+                        <button title="تعديل"><i class="fas fa-edit"></i></button>
+                        <button title="إلغاء"><i class="fas fa-times"></i></button>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="empty-slot">
+                      حصة فارغة
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      
+      <!-- إدارة الجدول -->
+      <div class="tab-content" id="manage-schedule">
+        <div class="add-lesson-form">
+          <h3>إضافة حصة جديدة</h3>
+          <form id="add-lesson-form">
+            <div class="form-row">
+              <div class="form-col">
+                <div class="form-group">
+                  <label for="subject">المادة</label>
+                  <select id="subject" required>
+                    <option value="">اختر المادة</option>
+                    <option value="sub1">الرياضيات</option>
+                    <option value="sub2">العلوم</option>
+                    <option value="sub3">اللغة العربية</option>
+                    <option value="sub4">اللغة الإنجليزية</option>
+                    <option value="sub5">الدراسات الاجتماعية</option>
+                    <option value="sub6">التربية الإسلامية</option>
+                    <option value="sub7">الحاسوب</option>
+                    <option value="sub8">التربية الفنية</option>
+                    <option value="sub9">التربية البدنية</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-col">
+                <div class="form-group">
+                  <label for="classroom">الفصل</label>
+                  <select id="classroom" required>
+                    <option value="">اختر الفصل</option>
+                    <option value="cls1">الصف التاسع - أ</option>
+                    <option value="cls2">الصف التاسع - ب</option>
+                    <option value="cls3">الصف التاسع - ج</option>
+                    <option value="cls4">الصف الثامن - أ</option>
+                    <option value="cls5">الصف الثامن - ب</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-col">
+                <div class="form-group">
+                  <label for="teacher">المعلم</label>
+                  <select id="teacher" required>
+                    <option value="">اختر المعلم</option>
+                    <option value="2">أحمد المعلم</option>
+                    <!-- المزيد من المعلمين -->
+                  </select>
+                </div>
+              </div>
+            </div>
+            
+            <div class="form-row">
+              <div class="form-col">
+                <div class="form-group">
+                  <label for="room">القاعة</label>
+                  <select id="room" required>
+                    <option value="">اختر القاعة</option>
+                    <option value="room1">قاعة 101</option>
+                    <option value="room2">قاعة 102</option>
+                    <option value="room3">قاعة 103</option>
+                    <option value="room4">مختبر العلوم</option>
+                    <option value="room5">مختبر الحاسوب</option>
+                    <option value="room6">قاعة 201</option>
+                    <option value="room7">قاعة الفنون</option>
+                    <option value="room8">الملعب</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-col">
+                <div class="form-group">
+                  <label for="day">اليوم</label>
+                  <select id="day" required>
+                    <option value="">اختر اليوم</option>
+                    <option value="الأحد">الأحد</option>
+                    <option value="الاثنين">الاثنين</option>
+                    <option value="الثلاثاء">الثلاثاء</option>
+                    <option value="الأربعاء">الأربعاء</option>
+                    <option value="الخميس">الخميس</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-col">
+                <div class="form-group">
+                  <label for="period">الحصة</label>
+                  <select id="period" required>
+                    <option value="">اختر الحصة</option>
+                    <option value="1">الحصة الأولى (08:00 - 08:45)</option>
+                    <option value="2">الحصة الثانية (08:50 - 09:35)</option>
+                    <option value="3">الحصة الثالثة (09:40 - 10:25)</option>
+                    <option value="4">الحصة الرابعة (10:40 - 11:25)</option>
+                    <option value="5">الحصة الخامسة (11:30 - 12:15)</option>
+                    <option value="6">الحصة السادسة (12:20 - 13:05)</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            
+            <div class="form-row">
+              <div class="form-col">
+                <div class="form-group">
+                  <label for="semester">الفصل الدراسي</label>
+                  <select id="semester" required>
+                    <option value="الفصل الأول">الفصل الدراسي الأول</option>
+                    <option value="الفصل الثاني">الفصل الدراسي الثاني</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-col">
+                <div class="form-group">
+                  <label for="school-year">العام الدراسي</label>
+                  <select id="school-year" required>
+                    <option value="2023-2024">2023-2024</option>
+                    <option value="2024-2025">2024-2025</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-col">
+                <!-- فارغ للتوازن -->
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <button type="submit" class="btn btn-success">إضافة الحصة</button>
+              <button type="reset" class="btn">إعادة تعيين</button>
+            </div>
+          </form>
+        </div>
+        
+        <div class="card">
+          <div class="card-header">
+            <h3>خيارات متقدمة للجدول</h3>
+          </div>
+          <div class="card-body">
+            <div style="margin-bottom: 20px;">
+              <h4>إدارة النماذج</h4>
+              <p>يمكنك إنشاء نموذج جدول وحفظه للاستخدام في الفصول الدراسية المختلفة.</p>
+              <div style="margin-top: 10px;">
+                <button class="btn">إنشاء نموذج جدول</button>
+                <button class="btn" style="margin-right: 10px;">استيراد نموذج</button>
+              </div>
+            </div>
+            
+            <div style="margin-bottom: 20px;">
+              <h4>التحقق من التعارضات</h4>
+              <p>التحقق من وجود تعارضات في جدول المعلمين أو القاعات أو الفصول.</p>
+              <div style="margin-top: 10px;">
+                <button class="btn">فحص التعارضات</button>
+              </div>
+            </div>
+            
+            <div style="margin-bottom: 20px;">
+              <h4>توزيع تلقائي</h4>
+              <p>إنشاء توزيع تلقائي للحصص بناءً على المعايير المحددة.</p>
+              <div style="margin-top: 10px;">
+                <button class="btn">بدء التوزيع التلقائي</button>
+              </div>
+            </div>
+            
+            <div>
+              <h4>حذف الجدول</h4>
+              <p>حذف جميع الحصص للفصل الدراسي المحدد.</p>
+              <div style="margin-top: 10px;">
+                <button class="btn btn-danger">حذف جميع الحصص</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- تغييرات الجدول -->
+      <div class="tab-content" id="schedule-changes">
+        <div class="card">
+          <div class="card-header">
+            <h3>إضافة تغيير في الجدول</h3>
+          </div>
+          <div class="card-body">
+            <form id="add-change-form">
+              <div class="form-row">
+                <div class="form-col">
+                  <div class="form-group">
+                    <label for="change-type">نوع التغيير</label>
+                    <select id="change-type" required>
+                      <option value="">اختر نوع التغيير</option>
+                      <option value="cancel">إلغاء حصة</option>
+                      <option value="reschedule">تغيير موعد حصة</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="form-col">
+                  <div class="form-group">
+                    <label for="change-date">التاريخ</label>
+                    <input type="date" id="change-date" required>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="form-row">
+                <div class="form-col">
+                  <div class="form-group">
+                    <label for="change-lesson">الحصة المتأثرة</label>
+                    <select id="change-lesson" required>
+                      <option value="">اختر الحصة</option>
+                      <option value="l1">الرياضيات - الصف التاسع أ - الأحد - الحصة الأولى</option>
+                      <option value="l2">العلوم - الصف التاسع أ - الأحد - الحصة الثانية</option>
+                      <option value="l3">اللغة العربية - الصف التاسع أ - الأحد - الحصة الثالثة</option>
+                      <!-- المزيد من الحصص -->
+                    </select>
+                  </div>
+                </div>
+                <div class="form-col">
+                  <div class="form-group">
+                    <label for="change-reason">سبب التغيير</label>
+                    <input type="text" id="change-reason" placeholder="أدخل سبب التغيير" required>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- خيارات تغيير الموعد (تظهر فقط عند اختيار تغيير موعد) -->
+              <div id="reschedule-options" style="display: none;">
+                <div class="form-row">
+                  <div class="form-col">
+                    <div class="form-group">
+                      <label for="new-timeslot">الوقت الجديد</label>
+                      <select id="new-timeslot">
+                        <option value="">اختر الوقت الجديد</option>
+                        <option value="ts11">الاثنين - الحصة الخامسة (11:30 - 12:15)</option>
+                        <option value="ts12">الاثنين - الحصة السادسة (12:20 - 13:05)</option>
+                        <!-- المزيد من الأوقات -->
+                      </select>
+                    </div>
+                  </div>
+                  <div class="form-col">
+                    <div class="form-group">
+                      <label for="new-room">القاعة الجديدة (اختياري)</label>
+                      <select id="new-room">
+                        <option value="">استخدام نفس القاعة</option>
+                        <option value="room1">قاعة 101</option>
+                        <option value="room2">قاعة 102</option>
+                        <!-- المزيد من القاعات -->
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="form-group">
+                <button type="submit" class="btn btn-success">إضافة التغيير</button>
+                <button type="reset" class="btn">إعادة تعيين</button>
+              </div>
+            </form>
+          </div>
+        </div>
+        
+        <div class="schedule-changes">
+          <h3>تغييرات الجدول الحالية</h3>
+          
+          <div class="change-item cancel">
+            <div class="change-header">
+              <div class="change-title">إلغاء حصة: الرياضيات - الصف التاسع أ</div>
+              <div class="change-date">20 مايو 2024</div>
+            </div>
+            <div class="change-details">
+              <p><strong>اليوم والوقت:</strong> الأحد، الحصة الأولى (08:00 - 08:45)</p>
+              <p><strong>المعلم:</strong> أحمد المعلم</p>
+              <p><strong>القاعة:</strong> قاعة 101</p>
+            </div>
+            <div class="change-reason">
+              سبب الإلغاء: غياب المعلم
+            </div>
+          </div>
+          
+          <div class="change-item reschedule">
+            <div class="change-header">
+              <div class="change-title">تغيير موعد: الرياضيات - الصف التاسع أ</div>
+              <div class="change-date">21 مايو 2024</div>
+            </div>
+            <div class="change-details">
+              <p><strong>من:</strong> الاثنين، الحصة الأولى (08:00 - 08:45)، قاعة 101</p>
+              <p><strong>إلى:</strong> الاثنين، الحصة الخامسة (11:30 - 12:15)، قاعة 102</p>
+              <p><strong>المعلم:</strong> أحمد المعلم</p>
+            </div>
+            <div class="change-reason">
+              سبب التغيير: صيانة القاعة
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+  
+  <script>
+    // التبديل بين علامات التبويب
+    const tabs = document.querySelectorAll('.tab');
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        // إزالة الفئة النشطة من جميع علامات التبويب
+        tabs.forEach(t => t.classList.remove('active'));
+        // إضافة الفئة النشطة إلى علامة التبويب المحددة
+        tab.classList.add('active');
+        
+        // إخفاء جميع محتويات علامات التبويب
+        const tabContents = document.querySelectorAll('.tab-content');
+        tabContents.forEach(content => content.classList.remove('active'));
+        
+        // إظهار المحتوى المقابل لعلامة التبويب المحددة
+        const tabId = tab.getAttribute('data-tab');
+        document.getElementById(tabId).classList.add('active');
+      });
+    });
+    
+    // تغيير نوع عرض الجدول
+    const viewTypeSelect = document.getElementById('view-type');
+    const classroomSelect = document.getElementById('classroom-select');
+    const teacherSelect = document.getElementById('teacher-select');
+    const roomSelect = document.getElementById('room-select');
+    
+    viewTypeSelect.addEventListener('change', () => {
+      // إخفاء جميع قوائم الاختيار
+      classroomSelect.style.display = 'none';
+      teacherSelect.style.display = 'none';
+      roomSelect.style.display = 'none';
+      
+      // إظهار قائمة الاختيار المناسبة حسب نوع العرض
+      const viewType = viewTypeSelect.value;
+      
+      switch (viewType) {
+        case 'classroom':
+          classroomSelect.style.display = 'block';
+          break;
+        case 'teacher':
+          teacherSelect.style.display = 'block';
+          break;
+        case 'room':
+          roomSelect.style.display = 'block';
+          break;
+        case 'student':
+          // لا نحتاج إلى قائمة اختيار للطالب (يعرض جدول الفصل الخاص به)
+          break;
+      }
+    });
+    
+    // نموذج إضافة حصة
+    const addLessonForm = document.getElementById('add-lesson-form');
+    addLessonForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      
+      // في تطبيق حقيقي، سيتم إرسال بيانات الحصة إلى الخادم
+      alert('تمت إضافة الحصة بنجاح!');
+      
+      // إعادة تعيين النموذج
+      addLessonForm.reset();
+    });
+    
+    // إظهار/إخفاء خيارات تغيير الموعد
+    const changeTypeSelect = document.getElementById('change-type');
+    const rescheduleOptions = document.getElementById('reschedule-options');
+    
+    changeTypeSelect.addEventListener('change', () => {
+      if (changeTypeSelect.value === 'reschedule') {
+        rescheduleOptions.style.display = 'block';
+      } else {
+        rescheduleOptions.style.display = 'none';
+      }
+    });
+    
+    // نموذج إضافة تغيير في الجدول
+    const addChangeForm = document.getElementById('add-change-form');
+    addChangeForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      
+      // في تطبيق حقيقي، سيتم إرسال بيانات التغيير إلى الخادم
+      alert('تمت إضافة التغيير بنجاح!');
+      
+      // إعادة تعيين النموذج
+      addChangeForm.reset();
+      rescheduleOptions.style.display = 'none';
+    });
+    
+    // طباعة الجدول
+    const printScheduleBtn = document.getElementById('print-schedule');
+    printScheduleBtn.addEventListener('click', () => {
+      window.print();
+    });
+    
+    // تصدير الجدول كملف PDF (في تطبيق حقيقي، سيتم استخدام مكتبة لإنشاء ملف PDF)
+    const exportPdfBtn = document.getElementById('export-pdf');
+    exportPdfBtn.addEventListener('click', () => {
+      alert('سيتم تصدير الجدول كملف PDF...');
+    });
+  </script>
+</body>
+</html>

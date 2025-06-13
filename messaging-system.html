@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>نظام إدارة المدرسة - نظام المراسلات</title>
+  
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <style>
+    /* General Styles */
+    :root {
+      --primary-color: #3498db;
+      --primary-color-dark: #2980b9;
+      --secondary-color: #2c3e50;
+      --bg-color: #f8f9fa;
+      --text-color: #333;
+      --border-color: #ddd;
+      --success-color: #2ecc71;
+      --warning-color: #f39c12;
+      --danger-color: #e74c3c;
+      --light-color: #f8f9fa;
+      --dark-color: #343a40;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      line-height: 1.6;
+      direction: rtl;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 15px;
+    }
+    
+    header {
+      background-color: #fff;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      padding: 15px 0;
+    }
+    
+    header .container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    header h1 {
+      color: var(--primary-color);
+    }
+    
+    nav ul {
+      display: flex;
+      list-style: none;
+    }
+    
+    nav li {
+      margin-right: 20px;
+    }
+    
+    nav a {
+      color: var(--text-color);
+      text-decoration: none;
+      font-weight: 500;
+    }
+    
+    nav a.active {
+      color: var(--primary-color);
+    }
+    
+    main {
+      padding: 30px 0;
+    }
+    
+    .section-title {
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border-color);
+      color: var(--secondary-color);
+    }
+    
+    .card {
+      background-color: #fff;
+      border-radius: 5px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      margin-bottom: 20px;
+      overflow: hidden;
+    }
+    
+    .card-header {
+      padding: 15px;
+      background-color: var(--primary-color);
+      color: #fff;
+    }
+    
+    .card-body {
+      padding: 15px;
+    }
+    
+    .card-footer {
+      padding: 15px;
+      background-color: var(--light-color);
+      border-top: 1px solid var(--border-color);
+    }
+    
+    .btn {
+      display: inline-block;
+      background-color: var(--primary-color);
+      color: #fff;
+      padding: 8px 15px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      text-decoration: none;
+      font-size: 14px;
+      transition: background-color 0.3s;
+    }
+    
+    .btn:hover {
+      background-color: var(--primary-color-dark);
+    }
+    
+    .btn-success {
+      background-color: var(--success-color);
+    }
+    
+    .btn-warning {
+      background-color: var(--warning-color);
+    }
+    
+    .btn-danger {
+      background-color: var(--danger-color);
+    }
+    
+    .tabs {
+      display: flex;
+      margin-bottom: 20px;
+      border-bottom: 1px solid var(--border-color);
+    }
+    
+    .tab {
+      padding: 10px 20px;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+    }
+    
+    .tab.active {
+      border-bottom-color: var(--primary-color);
+      color: var(--primary-color);
+      font-weight: 500;
+    }
+    
+    .tab-content {
+      display: none;
+    }
+    
+    .tab-content.active {
+      display: block;
+    }
+    
+    /* Messaging System Styles */
+    .messaging-container {
+      display: flex;
+      gap: 20px;
+      height: 600px;
+      background-color: #fff;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      border-radius: 5px;
+      overflow: hidden;
+    }
+    
+    .conversations-list {
+      width: 300px;
+      border-left: 1px solid var(--border-color);
+      overflow-y: auto;
+    }
+    
+    .conversation-item {
+      padding: 15px;
+      border-bottom: 1px solid var(--border-color);
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    
+    .conversation-item:hover {
+      background-color: var(--light-color);
+    }
+    
+    .conversation-item.active {
+      background-color: var(--light-color);
+      border-right: 3px solid var(--primary-color);
+    }
+    
+    .conversation-item.unread {
+      background-color: rgba(52, 152, 219, 0.1);
+    }
+    
+    .conversation-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 5px;
+    }
+    
+    .conversation-title {
+      font-weight: 600;
+      color: var(--dark-color);
+    }
+    
+    .conversation-time {
+      font-size: 12px;
+      color: #666;
+    }
+    
+    .conversation-last-message {
+      font-size: 14px;
+      color: #666;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    
+    .conversation-badge {
+      background-color: var(--primary-color);
+      color: #fff;
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+    }
+    
+    .chat-area {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .chat-header {
+      padding: 15px;
+      background-color: var(--light-color);
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .chat-title {
+      font-weight: 600;
+      color: var(--dark-color);
+    }
+    
+    .chat-messages {
+      flex: 1;
+      padding: 15px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    
+    .message {
+      max-width: 70%;
+      padding: 10px 15px;
+      border-radius: 10px;
+      position: relative;
+    }
+    
+    .message.sent {
+      align-self: flex-end;
+      background-color: var(--primary-color);
+      color: #fff;
+      border-bottom-right-radius: 0;
+    }
+    
+    .message.received {
+      align-self: flex-start;
+      background-color: var(--light-color);
+      border-bottom-left-radius: 0;
+    }
+    
+    .message-time {
+      font-size: 11px;
+      display: block;
+      margin-top: 5px;
+      text-align: left;
+    }
+    
+    .message.sent .message-time {
+      color: rgba(255, 255, 255, 0.7);
+    }
+    
+    .message.received .message-time {
+      color: #666;
+    }
+    
+    .chat-input {
+      padding: 15px;
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      gap: 10px;
+    }
+    
+    .chat-input textarea {
+      flex: 1;
+      padding: 10px;
+      border: 1px solid var(--border-color);
+      border-radius: 5px;
+      resize: none;
+      font-family: inherit;
+    }
+    
+    .chat-input button {
+      padding: 10px 15px;
+    }
+    
+    /* Announcements Styles */
+    .announcements-list {
+      margin-bottom: 30px;
+    }
+    
+    .announcement {
+      background-color: #fff;
+      border-radius: 5px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      margin-bottom: 15px;
+      overflow: hidden;
+    }
+    
+    .announcement-header {
+      padding: 15px;
+      background-color: var(--secondary-color);
+      color: #fff;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .announcement-title {
+      font-weight: 600;
+      font-size: 18px;
+    }
+    
+    .announcement-date {
+      font-size: 14px;
+    }
+    
+    .announcement-body {
+      padding: 15px;
+    }
+    
+    .announcement-content {
+      margin-bottom: 15px;
+    }
+    
+    .announcement-footer {
+      padding: 15px;
+      background-color: var(--light-color);
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .announcement-publisher {
+      font-size: 14px;
+      color: #666;
+    }
+    
+    .announcement-audience {
+      display: flex;
+      gap: 5px;
+    }
+    
+    .audience-tag {
+      padding: 3px 8px;
+      background-color: var(--primary-color);
+      color: #fff;
+      border-radius: 15px;
+      font-size: 12px;
+    }
+    
+    /* New Announcement Form */
+    .new-announcement-form {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 5px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      margin-bottom: 20px;
+    }
+    
+    .form-group {
+      margin-bottom: 15px;
+    }
+    
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: 500;
+    }
+    
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+    }
+    
+    .form-group textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+    
+    .checkbox-group {
+      display: flex;
+      gap: 15px;
+      margin-top: 5px;
+    }
+    
+    .checkbox-group label {
+      display: flex;
+      align-items: center;
+      font-weight: normal;
+      cursor: pointer;
+    }
+    
+    .checkbox-group input[type="checkbox"] {
+      width: auto;
+      margin-left: 5px;
+    }
+    
+    /* Media Queries */
+    @media (max-width: 768px) {
+      .messaging-container {
+        flex-direction: column;
+        height: auto;
+      }
+      
+      .conversations-list {
+        width: 100%;
+        border-left: none;
+        border-bottom: 1px solid var(--border-color);
+        max-height: 300px;
+      }
+      
+      .message {
+        max-width: 85%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <h1>نظام إدارة المدرسة</h1>
+      <nav>
+        <ul>
+          <li><a href="#">الرئيسية</a></li>
+          <li><a href="#">الواجبات المنزلية</a></li>
+          <li><a href="#" class="active">المراسلات</a></li>
+          <li><a href="#">الإعدادات</a></li>
+          <li><a href="#">تسجيل الخروج</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+  
+  <main>
+    <div class="container">
+      <h2 class="section-title">نظام المراسلات والتواصل</h2>
+      
+      <div class="tabs">
+        <div class="tab active" data-tab="messages-tab">الرسائل</div>
+        <div class="tab" data-tab="announcements-tab">الإعلانات</div>
+      </div>
+      
+      <div class="tab-content active" id="messages-tab">
+        <!-- نظام المراسلات -->
+        <div class="messaging-container">
+          <!-- قائمة المحادثات -->
+          <div class="conversations-list">
+            <div class="conversation-item active" data-conversation="conv1">
+              <div class="conversation-header">
+                <div class="conversation-title">أداء الطالب محمد</div>
+                <div class="conversation-time">10 مايو</div>
+              </div>
+              <div class="conversation-last-message">
+                نعم، سأرسل لكم مجموعة من التمارين الإضافية قريباً. كما أنصح بمراجعة الدروس السابقة معه.
+              </div>
+            </div>
+            
+            <div class="conversation-item unread" data-conversation="conv2">
+              <div class="conversation-header">
+                <div class="conversation-title">استفسار حول الواجب المنزلي</div>
+                <div class="conversation-badge">1</div>
+              </div>
+              <div class="conversation-last-message">
+                شكراً جزيلاً. سأقوم بإعداد التقرير وتضمين المراجع.
+              </div>
+            </div>
+            
+            <div class="conversation-item" data-conversation="conv3">
+              <div class="conversation-header">
+                <div class="conversation-title">اجتماع المعلمين القادم</div>
+                <div class="conversation-time">5 مايو</div>
+              </div>
+              <div class="conversation-last-message">
+                تذكير: سيعقد اجتماع المعلمين يوم الأربعاء القادم الساعة 3 مساءً في قاعة الاجتماعات.
+              </div>
+            </div>
+          </div>
+          
+          <!-- منطقة الدردشة -->
+          <div class="chat-area">
+            <div class="chat-header">
+              <div class="chat-title">أداء الطالب محمد</div>
+              <div>
+                <button class="btn" id="new-conversation-btn">محادثة جديدة</button>
+              </div>
+            </div>
+            
+            <div class="chat-messages" id="chat-messages">
+              <div class="message sent">
+                <div class="message-content">مرحباً، أود إبلاغكم بأن ابنكم محمد يحتاج إلى مزيد من الاهتمام بواجبات الرياضيات.</div>
+                <span class="message-time">14:30</span>
+              </div>
+              
+              <div class="message received">
+                <div class="message-content">شكراً لإبلاغي، سأحرص على متابعته في المنزل. هل هناك تمارين إضافية يمكن أن يقوم بها؟</div>
+                <span class="message-time">15:45</span>
+              </div>
+              
+              <div class="message sent">
+                <div class="message-content">نعم، سأرسل لكم مجموعة من التمارين الإضافية قريباً. كما أنصح بمراجعة الدروس السابقة معه.</div>
+                <span class="message-time">16:20</span>
+              </div>
+            </div>
+            
+            <div class="chat-input">
+              <textarea placeholder="اكتب رسالتك هنا..."></textarea>
+              <button class="btn">إرسال</button>
+            </div>
+          </div>
+        </div>
+        
+        <!-- نموذج إنشاء محادثة جديدة (مخفي بشكل افتراضي) -->
+        <div id="new-conversation-form" style="display: none; margin-top: 20px;" class="new-announcement-form">
+          <h3>إنشاء محادثة جديدة</h3>
+          <form id="create-conversation-form">
+            <div class="form-group">
+              <label for="recipient">المستلم:</label>
+              <select id="recipient" required>
+                <option value="">اختر المستلم</option>
+                <option value="1">مدير النظام</option>
+                <option value="2">أحمد المعلم</option>
+                <option value="3">محمد الطالب</option>
+                <option value="4">خالد ولي الأمر</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="conversation-title">عنوان المحادثة:</label>
+              <input type="text" id="conversation-title" placeholder="أدخل عنوان المحادثة" required>
+            </div>
+            <div class="form-group">
+              <label for="first-message">الرسالة الأولى:</label>
+              <textarea id="first-message" placeholder="اكتب رسالتك الأولى هنا" required></textarea>
+            </div>
+            <div class="form-group">
+              <button type="submit" class="btn btn-success">إنشاء المحادثة</button>
+              <button type="button" class="btn" onclick="toggleNewConversationForm()">إلغاء</button>
+            </div>
+          </form>
+        </div>
+      </div>
+      
+      <div class="tab-content" id="announcements-tab">
+        <!-- مدير/معلم: إنشاء إعلان جديد -->
+        <div class="new-announcement-form">
+          <h3>إنشاء إعلان جديد</h3>
+          <form id="create-announcement-form">
+            <div class="form-group">
+              <label for="announcement-title">عنوان الإعلان:</label>
+              <input type="text" id="announcement-title" placeholder="أدخل عنوان الإعلان" required>
+            </div>
+            <div class="form-group">
+              <label for="announcement-content">محتوى الإعلان:</label>
+              <textarea id="announcement-content" placeholder="اكتب محتوى الإعلان هنا" required></textarea>
+            </div>
+            <div class="form-group">
+              <label>الجمهور المستهدف:</label>
+              <div class="checkbox-group">
+                <label>
+                  <input type="checkbox" name="audience" value="teachers" checked> المعلمين
+                </label>
+                <label>
+                  <input type="checkbox" name="audience" value="students" checked> الطلاب
+                </label>
+                <label>
+                  <input type="checkbox" name="audience" value="parents" checked> أولياء الأمور
+                </label>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>المرفقات:</label>
+              <div class="file-input">
+                <input type="file" id="announcement-attachments" multiple>
+              </div>
+            </div>
+            <div class="form-group">
+              <button type="submit" class="btn btn-success">نشر الإعلان</button>
+            </div>
+          </form>
+        </div>
+        
+        <!-- قائمة الإعلانات -->
+        <div class="announcements-list">
+          <div class="announcement">
+            <div class="announcement-header">
+              <div class="announcement-title">بدء الاختبارات النهائية</div>
+              <div class="announcement-date">5 مايو 2024</div>
+            </div>
+            <div class="announcement-body">
+              <div class="announcement-content">
+                <p>نود إعلامكم أن الاختبارات النهائية ستبدأ يوم 15 يونيو وتستمر حتى 25 يونيو. يرجى الاطلاع على جدول الاختبارات المرفق.</p>
+              </div>
+              <div class="attachment-item">
+                <i class="fas fa-file-pdf"></i>
+                <span>جدول الاختبارات النهائية.pdf</span>
+                <span class="attachment-size">1.5MB</span>
+                <a href="#" class="btn">تنزيل</a>
+              </div>
+            </div>
+            <div class="announcement-footer">
+              <div class="announcement-publisher">
+                <i class="fas fa-user"></i> مدير النظام
+              </div>
+              <div class="announcement-audience">
+                <span class="audience-tag">المعلمين</span>
+                <span class="audience-tag">الطلاب</span>
+                <span class="audience-tag">أولياء الأمور</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="announcement">
+            <div class="announcement-header">
+              <div class="announcement-title">تعليق الدوام المدرسي</div>
+              <div class="announcement-date">10 مايو 2024</div>
+            </div>
+            <div class="announcement-body">
+              <div class="announcement-content">
+                <p>نظراً للأحوال الجوية، سيتم تعليق الدوام المدرسي غداً الخميس. وسيتم تعويض اليوم لاحقاً.</p>
+              </div>
+            </div>
+            <div class="announcement-footer">
+              <div class="announcement-publisher">
+                <i class="fas fa-user"></i> مدير النظام
+              </div>
+              <div class="announcement-audience">
+                <span class="audience-tag">المعلمين</span>
+                <span class="audience-tag">الطلاب</span>
+                <span class="audience-tag">أولياء الأمور</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="announcement">
+            <div class="announcement-header">
+              <div class="announcement-title">مسابقة الرياضيات</div>
+              <div class="announcement-date">8 مايو 2024</div>
+            </div>
+            <div class="announcement-body">
+              <div class="announcement-content">
+                <p>يسر قسم الرياضيات الإعلان عن مسابقة الرياضيات السنوية. يمكن للطلاب المهتمين التسجيل لدى معلم الرياضيات.</p>
+              </div>
+              <div class="attachment-item">
+                <i class="fas fa-file-pdf"></i>
+                <span>تفاصيل المسابقة.pdf</span>
+                <span class="attachment-size">0.8MB</span>
+                <a href="#" class="btn">تنزيل</a>
+              </div>
+            </div>
+            <div class="announcement-footer">
+              <div class="announcement-publisher">
+                <i class="fas fa-user"></i> أحمد المعلم
+              </div>
+              <div class="announcement-audience">
+                <span class="audience-tag">الطلاب</span>
+                <span class="audience-tag">أولياء الأمور</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+  
+  <script>
+    // التبديل بين علامات التبويب
+    const tabs = document.querySelectorAll('.tab');
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        // إزالة الفئة النشطة من جميع علامات التبويب
+        tabs.forEach(t => t.classList.remove('active'));
+        // إضافة الفئة النشطة إلى علامة التبويب المحددة
+        tab.classList.add('active');
+        
+        // إخفاء جميع محتويات علامات التبويب
+        const tabContents = document.querySelectorAll('.tab-content');
+        tabContents.forEach(content => content.classList.remove('active'));
+        
+        // إظهار المحتوى المقابل لعلامة التبويب المحددة
+        const tabId = tab.getAttribute('data-tab');
+        document.getElementById(tabId).classList.add('active');
+      });
+    });
+    
+    // التبديل بين المحادثات
+    const conversationItems = document.querySelectorAll('.conversation-item');
+    conversationItems.forEach(item => {
+      item.addEventListener('click', () => {
+        // إزالة الفئة النشطة من جميع عناصر المحادثة
+        conversationItems.forEach(i => i.classList.remove('active'));
+        // إضافة الفئة النشطة إلى عنصر المحادثة المحدد
+        item.classList.add('active');
+        
+        // إزالة فئة الرسائل غير المقروءة
+        item.classList.remove('unread');
+        const badge = item.querySelector('.conversation-badge');
+        if (badge) {
+          badge.remove();
+        }
+        
+        // تحديث محتوى المحادثة (في تطبيق حقيقي، ستقوم بتحميل الرسائل من الخادم)
+        const conversationId = item.getAttribute('data-conversation');
+        updateChatMessages(conversationId);
+      });
+    });
+    
+    // تحديث رسائل المحادثة
+    function updateChatMessages(conversationId) {
+      const chatMessages = document.getElementById('chat-messages');
+      const chatTitle = document.querySelector('.chat-title');
+      
+      // في تطبيق حقيقي، ستقوم بتحميل الرسائل من الخادم
+      // هنا نستخدم بيانات ثابتة للتوضيح
+      
+      if (conversationId === 'conv1') {
+        chatTitle.textContent = 'أداء الطالب محمد';
+        chatMessages.innerHTML = `
+          <div class="message sent">
+            <div class="message-content">مرحباً، أود إبلاغكم بأن ابنكم محمد يحتاج إلى مزيد من الاهتمام بواجبات الرياضيات.</div>
+            <span class="message-time">14:30</span>
+          </div>
+          
+          <div class="message received">
+            <div class="message-content">شكراً لإبلاغي، سأحرص على متابعته في المنزل. هل هناك تمارين إضافية يمكن أن يقوم بها؟</div>
+            <span class="message-time">15:45</span>
+          </div>
+          
+          <div class="message sent">
+            <div class="message-content">نعم، سأرسل لكم مجموعة من التمارين الإضافية قريباً. كما أنصح بمراجعة الدروس السابقة معه.</div>
+            <span class="message-time">16:20</span>
+          </div>
+        `;
+      } else if (conversationId === 'conv2') {
+        chatTitle.textContent = 'استفسار حول الواجب المنزلي';
+        chatMessages.innerHTML = `
+          <div class="message received">
+            <div class="message-content">أستاذ، لدي استفسار حول الواجب المنزلي الخاص بمادة العلوم. هل يمكنني استخدام مصادر خارجية؟</div>
+            <span class="message-time">18:10</span>
+          </div>
+          
+          <div class="message sent">
+            <div class="message-content">نعم، يمكنك استخدام مصادر خارجية مع ضرورة ذكر المراجع في نهاية التقرير.</div>
+            <span class="message-time">19:25</span>
+          </div>
+          
+          <div class="message received">
+            <div class="message-content">شكراً جزيلاً. سأقوم بإعداد التقرير وتضمين المراجع.</div>
+            <span class="message-time">10:15</span>
+          </div>
+        `;
+      } else if (conversationId === 'conv3') {
+        chatTitle.textContent = 'اجتماع المعلمين القادم';
+        chatMessages.innerHTML = `
+          <div class="message received">
+            <div class="message-content">تذكير: سيعقد اجتماع المعلمين يوم الأربعاء القادم الساعة 3 مساءً في قاعة الاجتماعات.</div>
+            <span class="message-time">09:00</span>
+          </div>
+        `;
+      }
+      
+      // التمرير إلى أسفل منطقة الرسائل
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+    
+    // إرسال رسالة جديدة
+    const chatInput = document.querySelector('.chat-input');
+    chatInput.addEventListener('submit', (e) => {
+      e.preventDefault();
+      
+      const messageText = chatInput.querySelector('textarea').value.trim();
+      if (messageText) {
+        // إضافة الرسالة إلى المحادثة
+        const chatMessages = document.getElementById('chat-messages');
+        const now = new Date();
+        const timeStr = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
+        
+        const messageHtml = `
+          <div class="message sent">
+            <div class="message-content">${messageText}</div>
+            <span class="message-time">${timeStr}</span>
+          </div>
+        `;
+        
+        chatMessages.innerHTML += messageHtml;
+        
+        // مسح مربع النص
+        chatInput.querySelector('textarea').value = '';
+        
+        // التمرير إلى أسفل منطقة الرسائل
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+        
+        // في تطبيق حقيقي، ستقوم بإرسال الرسالة إلى الخادم هنا
+      }
+    });
+    
+    // إضافة معالج الحدث لزر الإرسال
+    chatInput.querySelector('button').addEventListener('click', () => {
+      // محاكاة إرسال النموذج
+      const event = new Event('submit');
+      chatInput.dispatchEvent(event);
+    });
+    
+    // معالجة نموذج إنشاء إعلان جديد
+    const createAnnouncementForm = document.getElementById('create-announcement-form');
+    createAnnouncementForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      
+      // في تطبيق حقيقي، ستقوم بإرسال بيانات الإعلان إلى الخادم هنا
+      alert('تم نشر الإعلان بنجاح!');
+      
+      // إعادة تعيين النموذج
+      createAnnouncementForm.reset();
+    });
+    
+    // زر إنشاء محادثة جديدة
+    const newConversationBtn = document.getElementById('new-conversation-btn');
+    newConversationBtn.addEventListener('click', toggleNewConversationForm);
+    
+    function toggleNewConversationForm() {
+      const form = document.getElementById('new-conversation-form');
+      form.style.display = form.style.display === 'none' ? 'block' : 'none';
+    }
+    
+    // معالجة نموذج إنشاء محادثة جديدة
+    const createConversationForm = document.getElementById('create-conversation-form');
+    createConversationForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      
+      // في تطبيق حقيقي، ستقوم بإرسال بيانات المحادثة إلى الخادم هنا
+      alert('تم إنشاء المحادثة بنجاح!');
+      
+      // إعادة تعيين النموذج وإخفاءه
+      createConversationForm.reset();
+      toggleNewConversationForm();
+    });
+  </script>
+</body>
+</html>

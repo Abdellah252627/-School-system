@@ -1,0 +1,1340 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>نظام إدارة الوثائق والملفات التعليمية</title>
+  
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <style>
+    /* General Styles */
+    :root {
+      --primary-color: #3498db;
+      --primary-color-dark: #2980b9;
+      --secondary-color: #2c3e50;
+      --bg-color: #f8f9fa;
+      --text-color: #333;
+      --border-color: #ddd;
+      --success-color: #2ecc71;
+      --warning-color: #f39c12;
+      --danger-color: #e74c3c;
+      --info-color: #17a2b8;
+      --light-color: #f8f9fa;
+      --dark-color: #343a40;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      line-height: 1.6;
+      direction: rtl;
+    }
+    
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 15px;
+    }
+    
+    /* Header */
+    header {
+      background: linear-gradient(135deg, var(--primary-color), var(--primary-color-dark));
+      color: white;
+      padding: 20px 0;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    
+    header .container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .logo h1 {
+      font-size: 24px;
+      font-weight: 600;
+    }
+    
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    
+    .notifications {
+      position: relative;
+      cursor: pointer;
+    }
+    
+    .notification-badge {
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      background-color: var(--danger-color);
+      color: white;
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+    }
+    
+    /* Navigation */
+    .nav-tabs {
+      background-color: white;
+      border-bottom: 1px solid var(--border-color);
+      padding: 0;
+      margin-bottom: 30px;
+    }
+    
+    .nav-tabs .container {
+      display: flex;
+      gap: 0;
+    }
+    
+    .nav-tab {
+      padding: 15px 25px;
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      transition: all 0.3s;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .nav-tab:hover {
+      background-color: var(--light-color);
+    }
+    
+    .nav-tab.active {
+      border-bottom-color: var(--primary-color);
+      color: var(--primary-color);
+      background-color: var(--light-color);
+    }
+    
+    /* Content Sections */
+    .content-section {
+      display: none;
+      animation: fadeIn 0.3s ease;
+    }
+    
+    .content-section.active {
+      display: block;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    /* Filters */
+    .filters {
+      background-color: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      margin-bottom: 20px;
+    }
+    
+    .filters-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      align-items: end;
+    }
+    
+    .filter-group {
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .filter-group label {
+      margin-bottom: 5px;
+      font-weight: 500;
+      color: var(--secondary-color);
+    }
+    
+    .filter-group select,
+    .filter-group input {
+      padding: 10px;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      font-size: 14px;
+    }
+    
+    .filter-group select:focus,
+    .filter-group input:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+    }
+    
+    /* Document Grid */
+    .documents-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+    
+    .document-card {
+      background-color: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+      overflow: hidden;
+      transition: all 0.3s;
+      border-top: 4px solid var(--primary-color);
+    }
+    
+    .document-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    }
+    
+    .document-card.homework {
+      border-top-color: var(--warning-color);
+    }
+    
+    .document-card.lesson {
+      border-top-color: var(--success-color);
+    }
+    
+    .document-card.material {
+      border-top-color: var(--info-color);
+    }
+    
+    .document-header {
+      padding: 20px;
+      background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+    }
+    
+    .document-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--secondary-color);
+      margin-bottom: 8px;
+    }
+    
+    .document-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    
+    .document-subject {
+      background-color: var(--primary-color);
+      color: white;
+      padding: 4px 12px;
+      border-radius: 15px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+    
+    .document-type {
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 500;
+      text-transform: uppercase;
+    }
+    
+    .document-type.homework {
+      background-color: rgba(255, 193, 7, 0.2);
+      color: #856404;
+    }
+    
+    .document-type.lesson {
+      background-color: rgba(40, 167, 69, 0.2);
+      color: #155724;
+    }
+    
+    .document-type.material {
+      background-color: rgba(23, 162, 184, 0.2);
+      color: #0c5460;
+    }
+    
+    .document-info {
+      font-size: 13px;
+      color: #666;
+      display: flex;
+      gap: 15px;
+      margin-top: 10px;
+    }
+    
+    .document-info span {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    
+    .document-body {
+      padding: 20px;
+    }
+    
+    .document-description {
+      color: #666;
+      margin-bottom: 15px;
+      line-height: 1.5;
+    }
+    
+    .document-files {
+      margin-bottom: 15px;
+    }
+    
+    .document-files h4 {
+      color: var(--secondary-color);
+      margin-bottom: 10px;
+      font-size: 14px;
+    }
+    
+    .file-item {
+      display: flex;
+      align-items: center;
+      padding: 10px;
+      background-color: var(--light-color);
+      border-radius: 6px;
+      margin-bottom: 8px;
+      transition: background-color 0.3s;
+    }
+    
+    .file-item:hover {
+      background-color: #e9ecef;
+    }
+    
+    .file-icon {
+      margin-left: 10px;
+      font-size: 20px;
+    }
+    
+    .file-icon.fa-file-pdf {
+      color: #dc3545;
+    }
+    
+    .file-icon.fa-file-word {
+      color: #2b579a;
+    }
+    
+    .file-icon.fa-file-powerpoint {
+      color: #d24726;
+    }
+    
+    .file-details {
+      flex: 1;
+    }
+    
+    .file-name {
+      font-weight: 500;
+      color: var(--secondary-color);
+      margin-bottom: 2px;
+    }
+    
+    .file-size {
+      font-size: 12px;
+      color: #666;
+    }
+    
+    .document-tags {
+      margin-bottom: 15px;
+    }
+    
+    .tag {
+      display: inline-block;
+      background-color: #e9ecef;
+      color: #495057;
+      padding: 3px 8px;
+      border-radius: 12px;
+      font-size: 11px;
+      margin-left: 5px;
+      margin-bottom: 5px;
+    }
+    
+    .document-footer {
+      padding: 15px 20px;
+      background-color: var(--light-color);
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .document-date {
+      font-size: 12px;
+      color: #666;
+    }
+    
+    .document-actions {
+      display: flex;
+      gap: 8px;
+    }
+    
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 8px 15px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 500;
+      transition: all 0.3s;
+    }
+    
+    .btn-primary {
+      background-color: var(--primary-color);
+      color: white;
+    }
+    
+    .btn-primary:hover {
+      background-color: var(--primary-color-dark);
+    }
+    
+    .btn-success {
+      background-color: var(--success-color);
+      color: white;
+    }
+    
+    .btn-success:hover {
+      background-color: #27ae60;
+    }
+    
+    .btn-info {
+      background-color: var(--info-color);
+      color: white;
+    }
+    
+    .btn-info:hover {
+      background-color: #138496;
+    }
+    
+    .btn-sm {
+      padding: 5px 10px;
+      font-size: 12px;
+    }
+    
+    /* Add Document Form */
+    .add-document-form {
+      background-color: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+      margin-bottom: 30px;
+    }
+    
+    .form-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+    
+    .form-group {
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .form-group label {
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: var(--secondary-color);
+    }
+    
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      padding: 12px;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      font-size: 14px;
+      font-family: inherit;
+    }
+    
+    .form-group textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+    
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+    }
+    
+    /* File Upload Area */
+    .file-upload-area {
+      border: 2px dashed var(--border-color);
+      padding: 40px;
+      text-align: center;
+      border-radius: 12px;
+      margin: 20px 0;
+      cursor: pointer;
+      transition: all 0.3s;
+      background-color: #fafafa;
+    }
+    
+    .file-upload-area:hover {
+      background-color: #f0f8ff;
+      border-color: var(--primary-color);
+    }
+    
+    .file-upload-area.dragover {
+      background-color: #e3f2fd;
+      border-color: var(--primary-color);
+      border-style: solid;
+    }
+    
+    .upload-content i {
+      font-size: 48px;
+      color: var(--primary-color);
+      margin-bottom: 15px;
+    }
+    
+    .upload-content h3 {
+      color: var(--secondary-color);
+      margin-bottom: 10px;
+    }
+    
+    .upload-content p {
+      color: #666;
+      margin-bottom: 5px;
+    }
+    
+    .file-restrictions {
+      font-size: 12px;
+      color: #999;
+      font-style: italic;
+    }
+    
+    .uploaded-files-list {
+      margin-top: 20px;
+    }
+    
+    .uploaded-files-list h4 {
+      color: var(--secondary-color);
+      margin-bottom: 15px;
+    }
+    
+    /* Notifications Panel */
+    .notifications-panel {
+      position: fixed;
+      top: 0;
+      right: -400px;
+      width: 400px;
+      height: 100vh;
+      background-color: white;
+      box-shadow: -5px 0 15px rgba(0,0,0,0.1);
+      transition: right 0.3s;
+      z-index: 1000;
+      overflow-y: auto;
+    }
+    
+    .notifications-panel.open {
+      right: 0;
+    }
+    
+    .notifications-header {
+      padding: 20px;
+      background-color: var(--primary-color);
+      color: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .notifications-header h3 {
+      margin: 0;
+    }
+    
+    .close-notifications {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 20px;
+      cursor: pointer;
+    }
+    
+    .notification-item {
+      padding: 15px 20px;
+      border-bottom: 1px solid var(--border-color);
+      transition: background-color 0.3s;
+    }
+    
+    .notification-item:hover {
+      background-color: var(--light-color);
+    }
+    
+    .notification-item.unread {
+      background-color: #f8f9ff;
+      border-right: 4px solid var(--primary-color);
+    }
+    
+    .notification-title {
+      font-weight: 600;
+      color: var(--secondary-color);
+      margin-bottom: 5px;
+    }
+    
+    .notification-message {
+      color: #666;
+      font-size: 14px;
+      margin-bottom: 8px;
+    }
+    
+    .notification-date {
+      font-size: 12px;
+      color: #999;
+    }
+    
+    /* Priority Indicators */
+    .priority-indicator {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      margin-left: 8px;
+    }
+    
+    .priority-low { background-color: #28a745; }
+    .priority-normal { background-color: #17a2b8; }
+    .priority-high { background-color: #ffc107; }
+    .priority-urgent { background-color: #dc3545; }
+    
+    /* Empty State */
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: #666;
+    }
+    
+    .empty-state i {
+      font-size: 64px;
+      color: #ddd;
+      margin-bottom: 20px;
+    }
+    
+    .empty-state h3 {
+      margin-bottom: 10px;
+      color: var(--secondary-color);
+    }
+    
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .documents-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+      
+      .filters-row {
+        grid-template-columns: 1fr;
+      }
+      
+      .nav-tabs .container {
+        flex-wrap: wrap;
+      }
+      
+      .notifications-panel {
+        width: 100%;
+        right: -100%;
+      }
+      
+      .document-meta {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+      }
+      
+      .document-footer {
+        flex-direction: column;
+        gap: 10px;
+        align-items: flex-start;
+      }
+    }
+    
+    /* Loading Animation */
+    .loading {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid #f3f3f3;
+      border-top: 3px solid var(--primary-color);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header>
+    <div class="container">
+      <div class="logo">
+        <h1><i class="fas fa-graduation-cap"></i> نظام إدارة الوثائق التعليمية</h1>
+      </div>
+      <div class="user-info">
+        <div class="notifications" onclick="toggleNotifications()">
+          <i class="fas fa-bell fa-lg"></i>
+          <span class="notification-badge" id="notification-count">3</span>
+        </div>
+        <div class="user-profile">
+          <i class="fas fa-user-circle fa-lg"></i>
+          <span id="current-user-name">أحمد المعلم</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Navigation Tabs -->
+  <nav class="nav-tabs">
+    <div class="container">
+      <div class="nav-tab active" data-tab="all-documents">
+        <i class="fas fa-folder-open"></i>
+        جميع الوثائق
+      </div>
+      <div class="nav-tab" data-tab="homework">
+        <i class="fas fa-tasks"></i>
+        الواجبات
+      </div>
+      <div class="nav-tab" data-tab="lessons">
+        <i class="fas fa-chalkboard-teacher"></i>
+        الدروس
+      </div>
+      <div class="nav-tab" data-tab="materials">
+        <i class="fas fa-book"></i>
+        المواد التعليمية
+      </div>
+      <div class="nav-tab" data-tab="add-document">
+        <i class="fas fa-plus"></i>
+        إضافة وثيقة
+      </div>
+    </div>
+  </nav>
+
+  <main>
+    <div class="container">
+      <!-- All Documents Section -->
+      <section id="all-documents" class="content-section active">
+        <!-- Filters -->
+        <div class="filters">
+          <div class="filters-row">
+            <div class="filter-group">
+              <label for="search-input">البحث</label>
+              <input type="text" id="search-input" placeholder="ابحث في العنوان أو الوصف...">
+            </div>
+            <div class="filter-group">
+              <label for="type-filter">نوع الوثيقة</label>
+              <select id="type-filter">
+                <option value="">جميع الأنواع</option>
+                <option value="homework">واجبات</option>
+                <option value="lesson">دروس</option>
+                <option value="material">مواد تعليمية</option>
+              </select>
+            </div>
+            <div class="filter-group">
+              <label for="subject-filter">المادة</label>
+              <select id="subject-filter">
+                <option value="">جميع المواد</option>
+                <option value="الرياضيات">الرياضيات</option>
+                <option value="العلوم">العلوم</option>
+                <option value="اللغة العربية">اللغة العربية</option>
+              </select>
+            </div>
+            <div class="filter-group">
+              <label for="grade-filter">الصف</label>
+              <select id="grade-filter">
+                <option value="">جميع الصفوف</option>
+                <option value="الصف التاسع">الصف التاسع</option>
+                <option value="الصف العاشر">الصف العاشر</option>
+              </select>
+            </div>
+            <div class="filter-group">
+              <label>&nbsp;</label>
+              <button class="btn btn-primary" onclick="applyFilters()">
+                <i class="fas fa-search"></i> بحث
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Documents Grid -->
+        <div class="documents-grid" id="documents-container">
+          <!-- Documents will be loaded here -->
+        </div>
+      </section>
+
+      <!-- Homework Section -->
+      <section id="homework" class="content-section">
+        <div class="documents-grid" id="homework-container">
+          <!-- Homework documents will be loaded here -->
+        </div>
+      </section>
+
+      <!-- Lessons Section -->
+      <section id="lessons" class="content-section">
+        <div class="documents-grid" id="lessons-container">
+          <!-- Lesson documents will be loaded here -->
+        </div>
+      </section>
+
+      <!-- Materials Section -->
+      <section id="materials" class="content-section">
+        <div class="documents-grid" id="materials-container">
+          <!-- Material documents will be loaded here -->
+        </div>
+      </section>
+
+      <!-- Add Document Section -->
+      <section id="add-document" class="content-section">
+        <div class="add-document-form">
+          <h2><i class="fas fa-plus-circle"></i> إضافة وثيقة جديدة</h2>
+          
+          <form id="document-form">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="doc-title">عنوان الوثيقة *</label>
+                <input type="text" id="doc-title" required>
+              </div>
+              <div class="form-group">
+                <label for="doc-type">نوع الوثيقة *</label>
+                <select id="doc-type" required>
+                  <option value="">اختر النوع</option>
+                  <option value="homework">واجب منزلي</option>
+                  <option value="lesson">درس</option>
+                  <option value="material">مادة تعليمية</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="doc-subject">المادة *</label>
+                <select id="doc-subject" required>
+                  <option value="">اختر المادة</option>
+                  <option value="الرياضيات">الرياضيات</option>
+                  <option value="العلوم">العلوم</option>
+                  <option value="اللغة العربية">اللغة العربية</option>
+                  <option value="التاريخ">التاريخ</option>
+                  <option value="الجغرافيا">الجغرافيا</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="doc-grade">الصف *</label>
+                <select id="doc-grade" required>
+                  <option value="">اختر الصف</option>
+                  <option value="الصف التاسع">الصف التاسع</option>
+                  <option value="الصف العاشر">الصف العاشر</option>
+                  <option value="الصف الحادي عشر">الصف الحادي عشر</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="doc-classrooms">الفصول *</label>
+                <select id="doc-classrooms" multiple required>
+                  <option value="9أ">9أ</option>
+                  <option value="9ب">9ب</option>
+                  <option value="9ج">9ج</option>
+                  <option value="10أ">10أ</option>
+                  <option value="10ب">10ب</option>
+                </select>
+                <small>اضغط Ctrl لاختيار عدة فصول</small>
+              </div>
+              <div class="form-group">
+                <label for="doc-priority">الأولوية</label>
+                <select id="doc-priority">
+                  <option value="normal">عادية</option>
+                  <option value="low">منخفضة</option>
+                  <option value="high">عالية</option>
+                  <option value="urgent">عاجلة</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="doc-description">الوصف *</label>
+              <textarea id="doc-description" placeholder="اكتب وصفاً مفصلاً للوثيقة..." required></textarea>
+            </div>
+
+            <div class="form-group" id="due-date-group" style="display: none;">
+              <label for="doc-due-date">تاريخ التسليم</label>
+              <input type="date" id="doc-due-date">
+            </div>
+
+            <div class="form-group">
+              <label for="doc-tags">الكلمات المفتاحية</label>
+              <input type="text" id="doc-tags" placeholder="أدخل الكلمات المفتاحية مفصولة بفواصل">
+            </div>
+
+            <!-- File Upload Area -->
+            <div class="form-group">
+              <label>الملفات</label>
+              <div class="file-upload-area" id="file-upload-area">
+                <div class="upload-content">
+                  <i class="fas fa-cloud-upload-alt"></i>
+                  <h3>رفع الملفات</h3>
+                  <p>اسحب وأفلت الملفات هنا أو انقر للاختيار</p>
+                  <p class="file-restrictions">يُسمح بملفات PDF, Word, PowerPoint | الحد الأقصى: 50MB</p>
+                </div>
+                <input type="file" id="file-input" multiple accept=".pdf,.doc,.docx,.ppt,.pptx" style="display: none;">
+              </div>
+              <div class="uploaded-files-list" id="uploaded-files-list" style="display: none;">
+                <h4>الملفات المرفوعة:</h4>
+                <div id="files-container"></div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <button type="submit" class="btn btn-success">
+                <i class="fas fa-save"></i> حفظ الوثيقة
+              </button>
+              <button type="button" class="btn btn-primary" onclick="resetForm()">
+                <i class="fas fa-undo"></i> إعادة تعيين
+              </button>
+            </div>
+          </form>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- Notifications Panel -->
+  <div class="notifications-panel" id="notifications-panel">
+    <div class="notifications-header">
+      <h3>الإشعارات</h3>
+      <button class="close-notifications" onclick="toggleNotifications()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <div class="notifications-content" id="notifications-content">
+      <!-- Notifications will be loaded here -->
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/document-management.js"></script>
+  <script>
+    // Current user simulation
+    let currentUser = {
+      id: 'teacher1',
+      name: 'أحمد المعلم',
+      role: 'teacher'
+    };
+
+    // Initialize the application
+    document.addEventListener('DOMContentLoaded', function() {
+      initializeApp();
+      loadDocuments();
+      loadNotifications();
+      setupEventListeners();
+    });
+
+    function initializeApp() {
+      // Set current user name
+      document.getElementById('current-user-name').textContent = currentUser.name;
+      
+      // Update notification count
+      updateNotificationCount();
+    }
+
+    function setupEventListeners() {
+      // Tab navigation
+      document.querySelectorAll('.nav-tab').forEach(tab => {
+        tab.addEventListener('click', function() {
+          const tabId = this.dataset.tab;
+          switchTab(tabId);
+        });
+      });
+
+      // Document type change
+      document.getElementById('doc-type').addEventListener('change', function() {
+        const dueDateGroup = document.getElementById('due-date-group');
+        if (this.value === 'homework') {
+          dueDateGroup.style.display = 'block';
+        } else {
+          dueDateGroup.style.display = 'none';
+        }
+      });
+
+      // File upload
+      const fileUploadArea = document.getElementById('file-upload-area');
+      const fileInput = document.getElementById('file-input');
+
+      fileUploadArea.addEventListener('click', () => fileInput.click());
+      fileUploadArea.addEventListener('dragover', handleDragOver);
+      fileUploadArea.addEventListener('dragleave', handleDragLeave);
+      fileUploadArea.addEventListener('drop', handleFileDrop);
+      fileInput.addEventListener('change', handleFileSelect);
+
+      // Form submission
+      document.getElementById('document-form').addEventListener('submit', handleFormSubmit);
+    }
+
+    function switchTab(tabId) {
+      // Update active tab
+      document.querySelectorAll('.nav-tab').forEach(tab => {
+        tab.classList.remove('active');
+      });
+      document.querySelector(`[data-tab="${tabId}"]`).classList.add('active');
+
+      // Update active content
+      document.querySelectorAll('.content-section').forEach(section => {
+        section.classList.remove('active');
+      });
+      document.getElementById(tabId).classList.add('active');
+
+      // Load specific content
+      if (tabId === 'homework') {
+        loadDocumentsByType('homework');
+      } else if (tabId === 'lessons') {
+        loadDocumentsByType('lesson');
+      } else if (tabId === 'materials') {
+        loadDocumentsByType('material');
+      }
+    }
+
+    function loadDocuments() {
+      const documents = globalDocumentManager.getDocumentsByUser(currentUser.id, currentUser.role);
+      renderDocuments(documents, 'documents-container');
+    }
+
+    function loadDocumentsByType(type) {
+      const documents = globalDocumentManager.getDocumentsByType(type, currentUser.id, currentUser.role);
+      const containerId = type === 'lesson' ? 'lessons-container' : 
+                         type === 'material' ? 'materials-container' : 
+                         'homework-container';
+      renderDocuments(documents, containerId);
+    }
+
+    function renderDocuments(documents, containerId) {
+      const container = document.getElementById(containerId);
+      
+      if (documents.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <i class="fas fa-folder-open"></i>
+            <h3>لا توجد وثائق</h3>
+            <p>لم يتم العثور على أي وثائق في هذا القسم</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = documents.map(doc => createDocumentCard(doc)).join('');
+    }
+
+    function createDocumentCard(doc) {
+      const typeNames = {
+        homework: 'واجب',
+        lesson: 'درس',
+        material: 'مادة تعليمية'
+      };
+
+      const priorityClass = `priority-${doc.priority || 'normal'}`;
+      
+      return `
+        <div class="document-card ${doc.type}">
+          <div class="document-header">
+            <div class="document-title">${doc.title}</div>
+            <div class="document-meta">
+              <span class="document-subject">${doc.subject}</span>
+              <span class="document-type ${doc.type}">${typeNames[doc.type]}</span>
+            </div>
+            <div class="document-info">
+              <span><i class="fas fa-user"></i> ${doc.teacherName}</span>
+              <span><i class="fas fa-users"></i> ${doc.classrooms.join(', ')}</span>
+              <span class="priority-indicator ${priorityClass}"></span>
+            </div>
+          </div>
+          
+          <div class="document-body">
+            <div class="document-description">${doc.description}</div>
+            
+            ${doc.files && doc.files.length > 0 ? `
+              <div class="document-files">
+                <h4><i class="fas fa-paperclip"></i> الملفات المرفقة (${doc.files.length})</h4>
+                ${doc.files.map(file => `
+                  <div class="file-item" onclick="downloadFile('${file.id}')">
+                    <i class="fas ${globalDocumentManager.getFileIcon(file.type)} file-icon"></i>
+                    <div class="file-details">
+                      <div class="file-name">${file.name}</div>
+                      <div class="file-size">${globalDocumentManager.formatFileSize(file.size)}</div>
+                    </div>
+                  </div>
+                `).join('')}
+              </div>
+            ` : ''}
+            
+            ${doc.tags && doc.tags.length > 0 ? `
+              <div class="document-tags">
+                ${doc.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+              </div>
+            ` : ''}
+          </div>
+          
+          <div class="document-footer">
+            <div class="document-date">
+              <i class="fas fa-calendar"></i> ${formatDate(doc.createdDate)}
+              ${doc.dueDate ? `<br><i class="fas fa-clock"></i> موعد التسليم: ${formatDate(doc.dueDate)}` : ''}
+            </div>
+            <div class="document-actions">
+              <button class="btn btn-info btn-sm" onclick="viewDocument('${doc.id}')">
+                <i class="fas fa-eye"></i> عرض
+              </button>
+              ${currentUser.role === 'teacher' ? `
+                <button class="btn btn-primary btn-sm" onclick="editDocument('${doc.id}')">
+                  <i class="fas fa-edit"></i> تعديل
+                </button>
+              ` : ''}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function applyFilters() {
+      const searchTerm = document.getElementById('search-input').value;
+      const typeFilter = document.getElementById('type-filter').value;
+      const subjectFilter = document.getElementById('subject-filter').value;
+      const gradeFilter = document.getElementById('grade-filter').value;
+
+      const filters = {
+        type: typeFilter,
+        subject: subjectFilter,
+        grade: gradeFilter
+      };
+
+      const documents = globalDocumentManager.searchDocuments(searchTerm, filters);
+      const userDocuments = documents.filter(doc => {
+        const userDocs = globalDocumentManager.getDocumentsByUser(currentUser.id, currentUser.role);
+        return userDocs.some(userDoc => userDoc.id === doc.id);
+      });
+
+      renderDocuments(userDocuments, 'documents-container');
+    }
+
+    // File upload handlers
+    function handleDragOver(e) {
+      e.preventDefault();
+      e.currentTarget.classList.add('dragover');
+    }
+
+    function handleDragLeave(e) {
+      e.preventDefault();
+      e.currentTarget.classList.remove('dragover');
+    }
+
+    function handleFileDrop(e) {
+      e.preventDefault();
+      e.currentTarget.classList.remove('dragover');
+      const files = Array.from(e.dataTransfer.files);
+      processFiles(files);
+    }
+
+    function handleFileSelect(e) {
+      const files = Array.from(e.target.files);
+      processFiles(files);
+    }
+
+    function processFiles(files) {
+      files.forEach(file => {
+        const result = globalFileUploadManager.addFile(file);
+        if (result.success) {
+          addFileToUI(result.file);
+        } else {
+          alert(result.errors.join('\n'));
+        }
+      });
+    }
+
+    function addFileToUI(fileData) {
+      const container = document.getElementById('files-container');
+      const uploadedFilesList = document.getElementById('uploaded-files-list');
+      
+      uploadedFilesList.style.display = 'block';
+      
+      const fileElement = document.createElement('div');
+      fileElement.className = 'file-item';
+      fileElement.dataset.fileId = fileData.id;
+      
+      fileElement.innerHTML = `
+        <i class="fas ${fileData.icon} file-icon"></i>
+        <div class="file-details">
+          <div class="file-name">${fileData.name}</div>
+          <div class="file-size">${globalDocumentManager.formatFileSize(fileData.size)}</div>
+        </div>
+        <button type="button" class="btn btn-danger btn-sm" onclick="removeUploadedFile('${fileData.id}')">
+          <i class="fas fa-trash"></i>
+        </button>
+      `;
+      
+      container.appendChild(fileElement);
+    }
+
+    function removeUploadedFile(fileId) {
+      if (globalFileUploadManager.removeFile(fileId)) {
+        const fileElement = document.querySelector(`[data-file-id="${fileId}"]`);
+        if (fileElement) {
+          fileElement.remove();
+        }
+        
+        // Hide the uploaded files list if empty
+        const container = document.getElementById('files-container');
+        if (container.children.length === 0) {
+          document.getElementById('uploaded-files-list').style.display = 'none';
+        }
+      }
+    }
+
+    function handleFormSubmit(e) {
+      e.preventDefault();
+      
+      const formData = {
+        title: document.getElementById('doc-title').value,
+        type: document.getElementById('doc-type').value,
+        subject: document.getElementById('doc-subject').value,
+        grade: document.getElementById('doc-grade').value,
+        description: document.getElementById('doc-description').value,
+        classrooms: Array.from(document.getElementById('doc-classrooms').selectedOptions).map(option => option.value),
+        priority: document.getElementById('doc-priority').value,
+        teacherId: currentUser.id,
+        teacherName: currentUser.name,
+        tags: document.getElementById('doc-tags').value.split(',').map(tag => tag.trim()).filter(tag => tag)
+      };
+
+      if (formData.type === 'homework') {
+        formData.dueDate = document.getElementById('doc-due-date').value;
+      }
+
+      const files = globalFileUploadManager.getFilesForSave();
+      const newDocument = globalDocumentManager.addDocument(formData, files);
+      
+      if (newDocument) {
+        alert('تم حفظ الوثيقة بنجاح!');
+        resetForm();
+        loadDocuments();
+        updateNotificationCount();
+      }
+    }
+
+    function resetForm() {
+      document.getElementById('document-form').reset();
+      globalFileUploadManager.clearFiles();
+      document.getElementById('files-container').innerHTML = '';
+      document.getElementById('uploaded-files-list').style.display = 'none';
+      document.getElementById('due-date-group').style.display = 'none';
+    }
+
+    // Notifications
+    function loadNotifications() {
+      const notifications = globalDocumentManager.getNotificationsByUser(currentUser.id);
+      renderNotifications(notifications);
+    }
+
+    function renderNotifications(notifications) {
+      const container = document.getElementById('notifications-content');
+      
+      if (notifications.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <i class="fas fa-bell-slash"></i>
+            <h3>لا توجد إشعارات</h3>
+            <p>لم يتم العثور على أي إشعارات</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = notifications.map(notification => `
+        <div class="notification-item ${notification.isRead ? '' : 'unread'}" onclick="markAsRead('${notification.id}')">
+          <div class="notification-title">${notification.title}</div>
+          <div class="notification-message">${notification.message}</div>
+          <div class="notification-date">${formatDate(notification.createdDate)}</div>
+        </div>
+      `).join('');
+    }
+
+    function toggleNotifications() {
+      const panel = document.getElementById('notifications-panel');
+      panel.classList.toggle('open');
+    }
+
+    function markAsRead(notificationId) {
+      globalDocumentManager.markNotificationAsRead(notificationId, currentUser.id);
+      updateNotificationCount();
+      loadNotifications();
+    }
+
+    function updateNotificationCount() {
+      const count = globalDocumentManager.getUnreadNotificationsCount(currentUser.id);
+      const badge = document.getElementById('notification-count');
+      
+      if (count > 0) {
+        badge.textContent = count;
+        badge.style.display = 'flex';
+      } else {
+        badge.style.display = 'none';
+      }
+    }
+
+    // Utility functions
+    function formatDate(dateString) {
+      const date = new Date(dateString);
+      return date.toLocaleDateString('ar-SA', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+    }
+
+    function downloadFile(fileId) {
+      // In a real application, this would download the file
+      alert('تنزيل الملف: ' + fileId);
+    }
+
+    function viewDocument(docId) {
+      // In a real application, this would open the document in detail view
+      alert('عرض الوثيقة: ' + docId);
+    }
+
+    function editDocument(docId) {
+      // In a real application, this would open the document for editing
+      alert('تعديل الوثيقة: ' + docId);
+    }
+
+    // Close notifications panel when clicking outside
+    document.addEventListener('click', function(e) {
+      const panel = document.getElementById('notifications-panel');
+      const notificationButton = document.querySelector('.notifications');
+      
+      if (!panel.contains(e.target) && !notificationButton.contains(e.target)) {
+        panel.classList.remove('open');
+      }
+    });
+  </script>
+</body>
+</html>

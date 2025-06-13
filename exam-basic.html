@@ -1,0 +1,1377 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>نظام إدارة المدرسة - الاختبارات والتقييم</title>
+  
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <style>
+    /* General Styles */
+    :root {
+      --primary-color: #3498db;
+      --primary-color-dark: #2980b9;
+      --secondary-color: #2c3e50;
+      --bg-color: #f8f9fa;
+      --text-color: #333;
+      --border-color: #ddd;
+      --success-color: #2ecc71;
+      --warning-color: #f39c12;
+      --danger-color: #e74c3c;
+      --light-color: #f8f9fa;
+      --dark-color: #343a40;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      line-height: 1.6;
+      direction: rtl;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 15px;
+    }
+    
+    header {
+      background-color: #fff;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      padding: 15px 0;
+    }
+    
+    header .container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    header h1 {
+      color: var(--primary-color);
+    }
+    
+    nav ul {
+      display: flex;
+      list-style: none;
+    }
+    
+    nav li {
+      margin-right: 20px;
+    }
+    
+    nav a {
+      color: var(--text-color);
+      text-decoration: none;
+      font-weight: 500;
+    }
+    
+    nav a.active {
+      color: var(--primary-color);
+    }
+    
+    main {
+      padding: 30px 0;
+    }
+    
+    .section-title {
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border-color);
+      color: var(--secondary-color);
+    }
+    
+    .btn {
+      display: inline-block;
+      background-color: var(--primary-color);
+      color: #fff;
+      padding: 8px 15px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      text-decoration: none;
+      font-size: 14px;
+      transition: background-color 0.3s;
+    }
+    
+    .btn:hover {
+      background-color: var(--primary-color-dark);
+    }
+    
+    .btn-success {
+      background-color: var(--success-color);
+    }
+    
+    .btn-warning {
+      background-color: var(--warning-color);
+    }
+    
+    .btn-danger {
+      background-color: var(--danger-color);
+    }
+    
+    .tabs {
+      display: flex;
+      margin-bottom: 20px;
+      border-bottom: 1px solid var(--border-color);
+    }
+    
+    .tab {
+      padding: 10px 20px;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+    }
+    
+    .tab.active {
+      border-bottom-color: var(--primary-color);
+      color: var(--primary-color);
+      font-weight: 500;
+    }
+    
+    .tab-content {
+      display: none;
+    }
+    
+    .tab-content.active {
+      display: block;
+    }
+    
+    .form-group {
+      margin-bottom: 15px;
+    }
+    
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: 500;
+    }
+    
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      font-size: 14px;
+    }
+    
+    .card {
+      background-color: #fff;
+      border-radius: 5px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      margin-bottom: 20px;
+      overflow: hidden;
+    }
+    
+    .card-header {
+      padding: 15px;
+      background-color: var(--primary-color);
+      color: #fff;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .card-body {
+      padding: 15px;
+    }
+    
+    .card-footer {
+      padding: 15px;
+      background-color: var(--light-color);
+      border-top: 1px solid var(--border-color);
+    }
+    
+    /* Exam System Styles */
+    .exams-container {
+      margin-bottom: 30px;
+    }
+    
+    .exams-filter {
+      background-color: #fff;
+      padding: 15px;
+      border-radius: 5px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      margin-bottom: 20px;
+    }
+    
+    .filter-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      margin-bottom: 15px;
+    }
+    
+    .filter-col {
+      flex: 1;
+      min-width: 200px;
+    }
+    
+    .filter-col select,
+    .filter-col input {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+    }
+    
+    .exams-list {
+      margin-bottom: 20px;
+    }
+    
+    .exam-item {
+      background-color: #fff;
+      border-radius: 5px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      margin-bottom: 15px;
+      transition: transform 0.3s;
+    }
+    
+    .exam-item:hover {
+      transform: translateY(-3px);
+    }
+    
+    .exam-header {
+      padding: 15px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .exam-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--secondary-color);
+    }
+    
+    .exam-info {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      padding: 15px;
+      background-color: var(--bg-color);
+    }
+    
+    .exam-info-item {
+      display: flex;
+      align-items: center;
+    }
+    
+    .exam-info-item i {
+      margin-left: 5px;
+      color: var(--primary-color);
+    }
+    
+    .exam-actions {
+      padding: 15px;
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+    
+    /* Questions Bank */
+    .questions-bank {
+      margin-bottom: 30px;
+    }
+    
+    .question-item {
+      background-color: #fff;
+      border-radius: 5px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      margin-bottom: 15px;
+      padding: 15px;
+    }
+    
+    .question-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    
+    .question-type {
+      display: inline-block;
+      padding: 5px 10px;
+      background-color: var(--light-color);
+      border-radius: 15px;
+      font-size: 12px;
+      color: var(--secondary-color);
+      margin-bottom: 10px;
+    }
+    
+    .question-text {
+      font-size: 16px;
+      margin-bottom: 15px;
+    }
+    
+    .question-options {
+      margin-bottom: 15px;
+    }
+    
+    .question-option {
+      padding: 8px 15px;
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      margin-bottom: 8px;
+      background-color: var(--light-color);
+    }
+    
+    .question-option.correct {
+      border-color: var(--success-color);
+      background-color: rgba(46, 204, 113, 0.1);
+    }
+    
+    .question-meta {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      color: #666;
+    }
+    
+    .question-actions {
+      margin-top: 10px;
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+    
+    /* Create Exam Form */
+    .create-exam-form {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 5px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      margin-bottom: 30px;
+    }
+    
+    .form-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      margin-bottom: 15px;
+    }
+    
+    .form-col {
+      flex: 1;
+      min-width: 200px;
+    }
+    
+    .exam-questions {
+      background-color: var(--light-color);
+      border-radius: 5px;
+      padding: 15px;
+      margin-bottom: 20px;
+    }
+    
+    .selected-questions {
+      margin-bottom: 15px;
+    }
+    
+    .selected-question {
+      background-color: #fff;
+      border-radius: 4px;
+      padding: 10px;
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .question-search {
+      background-color: #fff;
+      border-radius: 5px;
+      padding: 15px;
+      margin-top: 20px;
+    }
+    
+    .search-results {
+      max-height: 300px;
+      overflow-y: auto;
+      margin-top: 15px;
+    }
+    
+    /* Exam Page */
+    .exam-page {
+      background-color: #fff;
+      border-radius: 5px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      margin-bottom: 30px;
+    }
+    
+    .exam-header-info {
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid var(--border-color);
+    }
+    
+    .exam-instructions {
+      background-color: var(--light-color);
+      padding: 15px;
+      border-radius: 5px;
+      margin-bottom: 20px;
+    }
+    
+    .exam-time {
+      display: flex;
+      justify-content: space-between;
+      background-color: var(--secondary-color);
+      color: #fff;
+      padding: 10px 15px;
+      border-radius: 5px;
+      margin-bottom: 20px;
+    }
+    
+    .questions-container {
+      margin-bottom: 30px;
+    }
+    
+    .exam-question {
+      background-color: var(--light-color);
+      border-radius: 5px;
+      padding: 15px;
+      margin-bottom: 20px;
+    }
+    
+    .question-number {
+      font-weight: 600;
+      color: var(--secondary-color);
+      margin-bottom: 10px;
+    }
+    
+    .exam-option {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+      padding: 10px;
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      background-color: #fff;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    
+    .exam-option:hover {
+      background-color: var(--bg-color);
+    }
+    
+    .exam-option input {
+      margin-left: 10px;
+    }
+    
+    .exam-option.selected {
+      border-color: var(--primary-color);
+      background-color: rgba(52, 152, 219, 0.1);
+    }
+    
+    .essay-answer {
+      width: 100%;
+      min-height: 150px;
+      padding: 10px;
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      resize: vertical;
+    }
+    
+    .exam-navigation {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 30px;
+    }
+    
+    /* Results */
+    .results-container {
+      margin-bottom: 30px;
+    }
+    
+    .result-card {
+      background-color: #fff;
+      border-radius: 5px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      margin-bottom: 20px;
+      overflow: hidden;
+    }
+    
+    .result-header {
+      padding: 15px;
+      background-color: var(--secondary-color);
+      color: #fff;
+    }
+    
+    .result-body {
+      padding: 20px;
+    }
+    
+    .result-summary {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+    
+    .summary-item {
+      flex: 1;
+      min-width: 150px;
+      padding: 15px;
+      background-color: var(--light-color);
+      border-radius: 5px;
+      text-align: center;
+    }
+    
+    .summary-value {
+      font-size: 24px;
+      font-weight: 600;
+      margin-bottom: 5px;
+    }
+    
+    .summary-label {
+      font-size: 14px;
+      color: #666;
+    }
+    
+    .result-questions {
+      margin-top: 20px;
+    }
+    
+    .result-question {
+      background-color: var(--light-color);
+      border-radius: 5px;
+      padding: 15px;
+      margin-bottom: 15px;
+    }
+    
+    .question-result {
+      margin-top: 10px;
+      padding: 10px;
+      border-radius: 4px;
+    }
+    
+    .question-result.correct {
+      background-color: rgba(46, 204, 113, 0.1);
+      border: 1px solid var(--success-color);
+    }
+    
+    .question-result.incorrect {
+      background-color: rgba(231, 76, 60, 0.1);
+      border: 1px solid var(--danger-color);
+    }
+    
+    .result-feedback {
+      margin-top: 20px;
+      padding: 15px;
+      background-color: var(--light-color);
+      border-radius: 5px;
+    }
+    
+    /* Media Queries */
+    @media (max-width: 768px) {
+      .filter-row {
+        flex-direction: column;
+        gap: 10px;
+      }
+      
+      .filter-col {
+        width: 100%;
+      }
+      
+      .form-row {
+        flex-direction: column;
+        gap: 10px;
+      }
+      
+      .form-col {
+        width: 100%;
+      }
+      
+      .exam-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      
+      .exam-info {
+        flex-direction: column;
+        gap: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <h1>نظام إدارة المدرسة</h1>
+      <nav>
+        <ul>
+          <li><a href="#">الرئيسية</a></li>
+          <li><a href="#">الواجبات المنزلية</a></li>
+          <li><a href="#">المراسلات</a></li>
+          <li><a href="#">الجدول الدراسي</a></li>
+          <li><a href="#">المكتبة التعليمية</a></li>
+          <li><a href="#" class="active">الاختبارات والتقييم</a></li>
+          <li><a href="#">شؤون الطلاب</a></li>
+          <li><a href="#">تسجيل الخروج</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+  
+  <main>
+    <div class="container">
+      <h2 class="section-title">نظام الاختبارات والتقييم</h2>
+      
+      <div class="tabs">
+        <div class="tab active" data-tab="upcoming-exams">الاختبارات القادمة</div>
+        <div class="tab" data-tab="create-exam">إنشاء اختبار</div>
+        <div class="tab" data-tab="questions-bank">بنك الأسئلة</div>
+        <div class="tab" data-tab="results">النتائج</div>
+        <div class="tab" data-tab="transcripts">الشهادات</div>
+      </div>
+      
+      <!-- الاختبارات القادمة -->
+      <div class="tab-content active" id="upcoming-exams">
+        <div class="exams-container">
+          <!-- فلاتر البحث -->
+          <div class="exams-filter">
+            <div class="filter-row">
+              <div class="filter-col">
+                <label for="subject-filter">المادة</label>
+                <select id="subject-filter">
+                  <option value="">جميع المواد</option>
+                  <option value="sub1">الرياضيات</option>
+                  <option value="sub2">العلوم</option>
+                  <option value="sub3">اللغة العربية</option>
+                  <option value="sub4">اللغة الإنجليزية</option>
+                </select>
+              </div>
+              
+              <div class="filter-col">
+                <label for="classroom-filter">الفصل</label>
+                <select id="classroom-filter">
+                  <option value="">جميع الفصول</option>
+                  <option value="cls1">الصف التاسع - أ</option>
+                  <option value="cls2">الصف التاسع - ب</option>
+                  <option value="cls3">الصف التاسع - ج</option>
+                </select>
+              </div>
+              
+              <div class="filter-col">
+                <label for="exam-type-filter">نوع الاختبار</label>
+                <select id="exam-type-filter">
+                  <option value="">جميع الأنواع</option>
+                  <option value="type1">اختبار فصلي</option>
+                  <option value="type2">اختبار شهري</option>
+                  <option value="type3">اختبار قصير</option>
+                </select>
+              </div>
+              
+              <div class="filter-col">
+                <label for="status-filter">الحالة</label>
+                <select id="status-filter">
+                  <option value="">جميع الحالات</option>
+                  <option value="scheduled">مجدول</option>
+                  <option value="in-progress">قيد التنفيذ</option>
+                  <option value="completed">مكتمل</option>
+                </select>
+              </div>
+            </div>
+            
+            <button class="btn">تطبيق الفلاتر</button>
+            <button class="btn" style="margin-right: 10px;">إعادة تعيين</button>
+          </div>
+          
+          <!-- قائمة الاختبارات -->
+          <div class="exams-list">
+            <!-- اختبار #1 -->
+            <div class="exam-item">
+              <div class="exam-header">
+                <div class="exam-title">اختبار الفصل الأول - الرياضيات</div>
+                <div class="exam-status">مجدول</div>
+              </div>
+              <div class="exam-info">
+                <div class="exam-info-item">
+                  <i class="fas fa-book"></i>
+                  <span>المادة: الرياضيات</span>
+                </div>
+                <div class="exam-info-item">
+                  <i class="fas fa-users"></i>
+                  <span>الفصل: الصف التاسع - أ</span>
+                </div>
+                <div class="exam-info-item">
+                  <i class="fas fa-calendar"></i>
+                  <span>التاريخ: 15/05/2024</span>
+                </div>
+                <div class="exam-info-item">
+                  <i class="fas fa-clock"></i>
+                  <span>الوقت: 09:00</span>
+                </div>
+                <div class="exam-info-item">
+                  <i class="fas fa-hourglass-half"></i>
+                  <span>المدة: 60 دقيقة</span>
+                </div>
+                <div class="exam-info-item">
+                  <i class="fas fa-check-circle"></i>
+                  <span>الدرجة الكاملة: 30</span>
+                </div>
+              </div>
+              <div class="exam-actions">
+                <button class="btn">عرض التفاصيل</button>
+                <button class="btn btn-warning">تعديل</button>
+                <button class="btn btn-danger">إلغاء</button>
+              </div>
+            </div>
+            
+            <!-- اختبار #2 -->
+            <div class="exam-item">
+              <div class="exam-header">
+                <div class="exam-title">اختبار شهري - العلوم</div>
+                <div class="exam-status">مكتمل</div>
+              </div>
+              <div class="exam-info">
+                <div class="exam-info-item">
+                  <i class="fas fa-book"></i>
+                  <span>المادة: العلوم</span>
+                </div>
+                <div class="exam-info-item">
+                  <i class="fas fa-users"></i>
+                  <span>الفصل: الصف التاسع - أ</span>
+                </div>
+                <div class="exam-info-item">
+                  <i class="fas fa-calendar"></i>
+                  <span>التاريخ: 10/05/2024</span>
+                </div>
+                <div class="exam-info-item">
+                  <i class="fas fa-clock"></i>
+                  <span>الوقت: 10:30</span>
+                </div>
+                <div class="exam-info-item">
+                  <i class="fas fa-hourglass-half"></i>
+                  <span>المدة: 45 دقيقة</span>
+                </div>
+                <div class="exam-info-item">
+                  <i class="fas fa-check-circle"></i>
+                  <span>الدرجة الكاملة: 20</span>
+                </div>
+              </div>
+              <div class="exam-actions">
+                <button class="btn">عرض التفاصيل</button>
+                <button class="btn btn-success">عرض النتائج</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- إنشاء اختبار -->
+      <div class="tab-content" id="create-exam">
+        <div class="create-exam-form">
+          <h3>إنشاء اختبار جديد</h3>
+          <form id="create-exam-form">
+            <div class="form-row">
+              <div class="form-col">
+                <div class="form-group">
+                  <label for="exam-title">عنوان الاختبار</label>
+                  <input type="text" id="exam-title" placeholder="أدخل عنوان الاختبار" required>
+                </div>
+              </div>
+              <div class="form-col">
+                <div class="form-group">
+                  <label for="exam-subject">المادة</label>
+                  <select id="exam-subject" required>
+                    <option value="">اختر المادة</option>
+                    <option value="sub1">الرياضيات</option>
+                    <option value="sub2">العلوم</option>
+                    <option value="sub3">اللغة العربية</option>
+                    <option value="sub4">اللغة الإنجليزية</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-col">
+                <div class="form-group">
+                  <label for="exam-type">نوع الاختبار</label>
+                  <select id="exam-type" required>
+                    <option value="">اختر نوع الاختبار</option>
+                    <option value="type1">اختبار فصلي</option>
+                    <option value="type2">اختبار شهري</option>
+                    <option value="type3">اختبار قصير</option>
+                    <option value="type4">اختبار عملي</option>
+                    <option value="type5">اختبار نهائي</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            
+            <div class="form-row">
+              <div class="form-col">
+                <div class="form-group">
+                  <label for="exam-classroom">الفصل</label>
+                  <select id="exam-classroom" required>
+                    <option value="">اختر الفصل</option>
+                    <option value="cls1">الصف التاسع - أ</option>
+                    <option value="cls2">الصف التاسع - ب</option>
+                    <option value="cls3">الصف التاسع - ج</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-col">
+                <div class="form-group">
+                  <label for="exam-date">تاريخ الاختبار</label>
+                  <input type="date" id="exam-date" required>
+                </div>
+              </div>
+              <div class="form-col">
+                <div class="form-group">
+                  <label for="exam-time">وقت الاختبار</label>
+                  <input type="time" id="exam-time" required>
+                </div>
+              </div>
+            </div>
+            
+            <div class="form-row">
+              <div class="form-col">
+                <div class="form-group">
+                  <label for="exam-duration">مدة الاختبار (بالدقائق)</label>
+                  <input type="number" id="exam-duration" min="15" max="180" value="60" required>
+                </div>
+              </div>
+              <div class="form-col">
+                <div class="form-group">
+                  <label for="exam-total-points">الدرجة الكاملة</label>
+                  <input type="number" id="exam-total-points" min="10" max="100" value="30" required>
+                </div>
+              </div>
+              <div class="form-col">
+                <div class="form-group">
+                  <label for="exam-passing-points">درجة النجاح</label>
+                  <input type="number" id="exam-passing-points" min="5" max="50" value="15" required>
+                </div>
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label for="exam-instructions">تعليمات الاختبار</label>
+              <textarea id="exam-instructions" rows="4" placeholder="أدخل تعليمات الاختبار"></textarea>
+            </div>
+            
+            <div class="exam-questions">
+              <h4>الأسئلة</h4>
+              <div class="selected-questions">
+                <!-- سيتم إضافة الأسئلة المحددة هنا -->
+                <div class="selected-question">
+                  <div>
+                    <strong>السؤال 1:</strong> ما هو ناتج 2 + 2 × 3؟
+                  </div>
+                  <div>
+                    <span>النقاط: 2</span>
+                    <button class="btn btn-danger btn-sm" style="margin-right: 10px;">إزالة</button>
+                  </div>
+                </div>
+                <div class="selected-question">
+                  <div>
+                    <strong>السؤال 2:</strong> الماء مركب كيميائي يتكون من ذرتي هيدروجين وذرة أكسجين.
+                  </div>
+                  <div>
+                    <span>النقاط: 1</span>
+                    <button class="btn btn-danger btn-sm" style="margin-right: 10px;">إزالة</button>
+                  </div>
+                </div>
+              </div>
+              
+              <button type="button" class="btn" id="add-question-btn">إضافة سؤال من بنك الأسئلة</button>
+              
+              <div class="question-search" id="question-search" style="display: none;">
+                <h4>البحث عن سؤال</h4>
+                <div class="filter-row">
+                  <div class="filter-col">
+                    <input type="text" placeholder="ابحث عن سؤال...">
+                  </div>
+                  <div class="filter-col">
+                    <select>
+                      <option value="">جميع أنواع الأسئلة</option>
+                      <option value="qtype1">اختيار من متعدد</option>
+                      <option value="qtype2">صح/خطأ</option>
+                      <option value="qtype3">مقالي</option>
+                    </select>
+                  </div>
+                  <div class="filter-col">
+                    <select>
+                      <option value="">جميع مستويات الصعوبة</option>
+                      <option value="easy">سهل</option>
+                      <option value="medium">متوسط</option>
+                      <option value="hard">صعب</option>
+                    </select>
+                  </div>
+                </div>
+                
+                <button class="btn">بحث</button>
+                
+                <div class="search-results">
+                  <!-- نتائج البحث عن الأسئلة -->
+                  <div class="question-item">
+                    <div class="question-header">
+                      <div class="question-type">اختيار من متعدد</div>
+                      <div>الصعوبة: متوسط</div>
+                    </div>
+                    <div class="question-text">أي من الآتي ليس من العناصر الكيميائية؟</div>
+                    <div class="question-options">
+                      <div class="question-option">الأكسجين</div>
+                      <div class="question-option">الهيدروجين</div>
+                      <div class="question-option correct">الماء</div>
+                      <div class="question-option">الكربون</div>
+                    </div>
+                    <div class="question-actions">
+                      <button class="btn">إضافة للاختبار</button>
+                    </div>
+                  </div>
+                  
+                  <div class="question-item">
+                    <div class="question-header">
+                      <div class="question-type">إكمال الفراغات</div>
+                      <div>الصعوبة: سهل</div>
+                    </div>
+                    <div class="question-text">The capital of France is ______.</div>
+                    <div class="question-options">
+                      <div class="question-option correct">Paris</div>
+                    </div>
+                    <div class="question-actions">
+                      <button class="btn">إضافة للاختبار</button>
+                    </div>
+                  </div>
+                </div>
+                
+                <button class="btn" style="margin-top: 15px;">إغلاق</button>
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <button type="submit" class="btn btn-success">إنشاء الاختبار</button>
+              <button type="reset" class="btn">إعادة تعيين</button>
+            </div>
+          </form>
+        </div>
+      </div>
+      
+      <!-- بنك الأسئلة -->
+      <div class="tab-content" id="questions-bank">
+        <div class="questions-bank">
+          <!-- فلاتر البحث -->
+          <div class="exams-filter">
+            <div class="filter-row">
+              <div class="filter-col">
+                <label for="question-subject-filter">المادة</label>
+                <select id="question-subject-filter">
+                  <option value="">جميع المواد</option>
+                  <option value="sub1">الرياضيات</option>
+                  <option value="sub2">العلوم</option>
+                  <option value="sub3">اللغة العربية</option>
+                  <option value="sub4">اللغة الإنجليزية</option>
+                </select>
+              </div>
+              
+              <div class="filter-col">
+                <label for="question-type-filter">نوع السؤال</label>
+                <select id="question-type-filter">
+                  <option value="">جميع الأنواع</option>
+                  <option value="qtype1">اختيار من متعدد</option>
+                  <option value="qtype2">صح/خطأ</option>
+                  <option value="qtype3">مقالي</option>
+                  <option value="qtype4">إكمال الفراغات</option>
+                </select>
+              </div>
+              
+              <div class="filter-col">
+                <label for="difficulty-filter">مستوى الصعوبة</label>
+                <select id="difficulty-filter">
+                  <option value="">جميع المستويات</option>
+                  <option value="easy">سهل</option>
+                  <option value="medium">متوسط</option>
+                  <option value="hard">صعب</option>
+                </select>
+              </div>
+              
+              <div class="filter-col">
+                <label for="question-text-search">بحث في نص السؤال</label>
+                <input type="text" id="question-text-search" placeholder="ابحث في نص السؤال...">
+              </div>
+            </div>
+            
+            <button class="btn">تطبيق الفلاتر</button>
+            <button class="btn" style="margin-right: 10px;">إعادة تعيين</button>
+            <button class="btn btn-success" style="float: left;">إضافة سؤال جديد</button>
+          </div>
+          
+          <!-- قائمة الأسئلة -->
+          <div class="questions-list">
+            <!-- سؤال #1 -->
+            <div class="question-item">
+              <div class="question-header">
+                <div class="question-type">
+                  <i class="fas fa-list-ul"></i> اختيار من متعدد
+                </div>
+                <div>
+                  <span>المادة: الرياضيات</span> | 
+                  <span>الصعوبة: متوسط</span> | 
+                  <span>النقاط: 2</span>
+                </div>
+              </div>
+              <div class="question-text">ما هو ناتج 2 + 2 × 3؟</div>
+              <div class="question-options">
+                <div class="question-option">8</div>
+                <div class="question-option">10</div>
+                <div class="question-option">12</div>
+                <div class="question-option correct">6</div>
+              </div>
+              <div class="question-meta">
+                <div>الصف: التاسع</div>
+                <div>الموضوع: العمليات الحسابية</div>
+                <div>تاريخ الإنشاء: 15/01/2024</div>
+              </div>
+              <div class="question-actions">
+                <button class="btn">استخدام في اختبار</button>
+                <button class="btn btn-warning">تعديل</button>
+                <button class="btn btn-danger">حذف</button>
+              </div>
+            </div>
+            
+            <!-- سؤال #2 -->
+            <div class="question-item">
+              <div class="question-header">
+                <div class="question-type">
+                  <i class="fas fa-check-square"></i> صح/خطأ
+                </div>
+                <div>
+                  <span>المادة: العلوم</span> | 
+                  <span>الصعوبة: سهل</span> | 
+                  <span>النقاط: 1</span>
+                </div>
+              </div>
+              <div class="question-text">الماء مركب كيميائي يتكون من ذرتي هيدروجين وذرة أكسجين.</div>
+              <div class="question-options">
+                <div class="question-option correct">صح</div>
+                <div class="question-option">خطأ</div>
+              </div>
+              <div class="question-meta">
+                <div>الصف: التاسع</div>
+                <div>الموضوع: المركبات الكيميائية</div>
+                <div>تاريخ الإنشاء: 20/01/2024</div>
+              </div>
+              <div class="question-actions">
+                <button class="btn">استخدام في اختبار</button>
+                <button class="btn btn-warning">تعديل</button>
+                <button class="btn btn-danger">حذف</button>
+              </div>
+            </div>
+            
+            <!-- سؤال #3 -->
+            <div class="question-item">
+              <div class="question-header">
+                <div class="question-type">
+                  <i class="fas fa-paragraph"></i> مقالي
+                </div>
+                <div>
+                  <span>المادة: اللغة العربية</span> | 
+                  <span>الصعوبة: صعب</span> | 
+                  <span>النقاط: 10</span>
+                </div>
+              </div>
+              <div class="question-text">اكتب مقالاً قصيراً عن أهمية القراءة في حياة الإنسان.</div>
+              <div class="question-meta">
+                <div>الصف: التاسع</div>
+                <div>الموضوع: التعبير</div>
+                <div>تاريخ الإنشاء: 10/02/2024</div>
+              </div>
+              <div class="question-actions">
+                <button class="btn">استخدام في اختبار</button>
+                <button class="btn btn-warning">تعديل</button>
+                <button class="btn btn-danger">حذف</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- النتائج -->
+      <div class="tab-content" id="results">
+        <div class="results-container">
+          <!-- فلاتر البحث -->
+          <div class="exams-filter">
+            <div class="filter-row">
+              <div class="filter-col">
+                <label for="result-subject-filter">المادة</label>
+                <select id="result-subject-filter">
+                  <option value="">جميع المواد</option>
+                  <option value="sub1">الرياضيات</option>
+                  <option value="sub2">العلوم</option>
+                  <option value="sub3">اللغة العربية</option>
+                  <option value="sub4">اللغة الإنجليزية</option>
+                </select>
+              </div>
+              
+              <div class="filter-col">
+                <label for="result-classroom-filter">الفصل</label>
+                <select id="result-classroom-filter">
+                  <option value="">جميع الفصول</option>
+                  <option value="cls1">الصف التاسع - أ</option>
+                  <option value="cls2">الصف التاسع - ب</option>
+                  <option value="cls3">الصف التاسع - ج</option>
+                </select>
+              </div>
+              
+              <div class="filter-col">
+                <label for="result-exam-filter">الاختبار</label>
+                <select id="result-exam-filter">
+                  <option value="">جميع الاختبارات</option>
+                  <option value="exam1">اختبار الفصل الأول - الرياضيات</option>
+                  <option value="exam2">اختبار شهري - العلوم</option>
+                </select>
+              </div>
+              
+              <div class="filter-col">
+                <label for="result-student-filter">الطالب</label>
+                <input type="text" id="result-student-filter" placeholder="اسم الطالب...">
+              </div>
+            </div>
+            
+            <button class="btn">تطبيق الفلاتر</button>
+            <button class="btn" style="margin-right: 10px;">إعادة تعيين</button>
+          </div>
+          
+          <!-- نتيجة اختبار -->
+          <div class="result-card">
+            <div class="result-header">
+              <h3>اختبار شهري - العلوم</h3>
+              <div>الطالب: محمد أحمد علي</div>
+            </div>
+            <div class="result-body">
+              <div class="result-summary">
+                <div class="summary-item">
+                  <div class="summary-value">18</div>
+                  <div class="summary-label">الدرجة</div>
+                </div>
+                <div class="summary-item">
+                  <div class="summary-value">20</div>
+                  <div class="summary-label">الدرجة الكاملة</div>
+                </div>
+                <div class="summary-item">
+                  <div class="summary-value">90%</div>
+                  <div class="summary-label">النسبة المئوية</div>
+                </div>
+                <div class="summary-item">
+                  <div class="summary-value">A</div>
+                  <div class="summary-label">التقدير</div>
+                </div>
+                <div class="summary-item">
+                  <div class="summary-value">10 مايو 2024</div>
+                  <div class="summary-label">تاريخ الاختبار</div>
+                </div>
+              </div>
+              
+              <div class="result-questions">
+                <h4>إجابات الأسئلة</h4>
+                
+                <!-- سؤال #1 -->
+                <div class="result-question">
+                  <div class="question-text">الماء مركب كيميائي يتكون من ذرتي هيدروجين وذرة أكسجين.</div>
+                  <div class="question-result correct">
+                    <strong>الإجابة:</strong> صح
+                    <div>
+                      <strong>النتيجة:</strong> 1/1 (صحيحة)
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- سؤال #2 -->
+                <div class="result-question">
+                  <div class="question-text">أي من الآتي ليس من العناصر الكيميائية؟</div>
+                  <div class="question-options">
+                    <div class="question-option">الأكسجين</div>
+                    <div class="question-option">الهيدروجين</div>
+                    <div class="question-option correct">الماء</div>
+                    <div class="question-option">الكربون</div>
+                  </div>
+                  <div class="question-result correct">
+                    <strong>الإجابة:</strong> الماء
+                    <div>
+                      <strong>النتيجة:</strong> 2/2 (صحيحة)
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="result-feedback">
+                <h4>تعليق المعلم</h4>
+                <p>أداء ممتاز. استمر على هذا المستوى.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- الشهادات -->
+      <div class="tab-content" id="transcripts">
+        <div class="card">
+          <div class="card-header">
+            <h3>شهادة الدرجات</h3>
+          </div>
+          <div class="card-body">
+            <div class="filter-row">
+              <div class="filter-col">
+                <label for="transcript-student">الطالب</label>
+                <select id="transcript-student">
+                  <option value="">اختر الطالب</option>
+                  <option value="3">محمد أحمد علي</option>
+                  <!-- المزيد من الطلاب -->
+                </select>
+              </div>
+              <div class="filter-col">
+                <label for="transcript-semester">الفصل الدراسي</label>
+                <select id="transcript-semester">
+                  <option value="">اختر الفصل الدراسي</option>
+                  <option value="الفصل الأول">الفصل الدراسي الأول</option>
+                  <option value="الفصل الثاني">الفصل الدراسي الثاني</option>
+                </select>
+              </div>
+              <div class="filter-col">
+                <label for="transcript-year">العام الدراسي</label>
+                <select id="transcript-year">
+                  <option value="">اختر العام الدراسي</option>
+                  <option value="2023-2024">2023-2024</option>
+                </select>
+              </div>
+            </div>
+            
+            <button class="btn" style="margin-top: 15px;">عرض الشهادة</button>
+            <button class="btn" style="margin-right: 10px;">طباعة الشهادة</button>
+          </div>
+        </div>
+        
+        <div class="result-card" style="margin-top: 20px;">
+          <div class="result-header">
+            <h3>شهادة الدرجات</h3>
+            <div>الطالب: محمد أحمد علي</div>
+            <div>الصف: التاسع - أ</div>
+            <div>الفصل الدراسي: الأول</div>
+            <div>العام الدراسي: 2023-2024</div>
+          </div>
+          <div class="result-body">
+            <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+              <thead>
+                <tr style="background-color: #f8f9fa; text-align: center;">
+                  <th style="padding: 10px; border: 1px solid #ddd;">المادة</th>
+                  <th style="padding: 10px; border: 1px solid #ddd;">الدرجة</th>
+                  <th style="padding: 10px; border: 1px solid #ddd;">التقدير</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr style="text-align: center;">
+                  <td style="padding: 10px; border: 1px solid #ddd;">الرياضيات</td>
+                  <td style="padding: 10px; border: 1px solid #ddd;">85</td>
+                  <td style="padding: 10px; border: 1px solid #ddd;">A</td>
+                </tr>
+                <tr style="text-align: center;">
+                  <td style="padding: 10px; border: 1px solid #ddd;">العلوم</td>
+                  <td style="padding: 10px; border: 1px solid #ddd;">90</td>
+                  <td style="padding: 10px; border: 1px solid #ddd;">A+</td>
+                </tr>
+                <tr style="text-align: center;">
+                  <td style="padding: 10px; border: 1px solid #ddd;">اللغة العربية</td>
+                  <td style="padding: 10px; border: 1px solid #ddd;">82</td>
+                  <td style="padding: 10px; border: 1px solid #ddd;">B+</td>
+                </tr>
+                <tr style="text-align: center;">
+                  <td style="padding: 10px; border: 1px solid #ddd;">اللغة الإنجليزية</td>
+                  <td style="padding: 10px; border: 1px solid #ddd;">88</td>
+                  <td style="padding: 10px; border: 1px solid #ddd;">A</td>
+                </tr>
+              </tbody>
+            </table>
+            
+            <div class="result-summary">
+              <div class="summary-item">
+                <div class="summary-value">3.8</div>
+                <div class="summary-label">المعدل التراكمي</div>
+              </div>
+              <div class="summary-item">
+                <div class="summary-value">86.3</div>
+                <div class="summary-label">متوسط الدرجات</div>
+              </div>
+              <div class="summary-item">
+                <div class="summary-value">95%</div>
+                <div class="summary-label">نسبة الحضور</div>
+              </div>
+            </div>
+            
+            <div class="result-feedback">
+              <h4>تعليق المعلم</h4>
+              <p>طالب مجتهد ومتفوق في جميع المواد.</p>
+            </div>
+            
+            <div class="result-feedback">
+              <h4>تعليق مدير المدرسة</h4>
+              <p>نفتخر بمستوى الطالب المتميز.</p>
+            </div>
+            
+            <div style="margin-top: 20px; text-align: left;">
+              <div>تاريخ الإصدار: 20/01/2024</div>
+              <div style="margin-top: 40px;">
+                <strong>ختم المدرسة</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+  
+  <script>
+    // التبديل بين علامات التبويب
+    const tabs = document.querySelectorAll('.tab');
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        // إزالة الفئة النشطة من جميع علامات التبويب
+        tabs.forEach(t => t.classList.remove('active'));
+        // إضافة الفئة النشطة إلى علامة التبويب المحددة
+        tab.classList.add('active');
+        
+        // إخفاء جميع محتويات علامات التبويب
+        const tabContents = document.querySelectorAll('.tab-content');
+        tabContents.forEach(content => content.classList.remove('active'));
+        
+        // إظهار المحتوى المقابل لعلامة التبويب المحددة
+        const tabId = tab.getAttribute('data-tab');
+        document.getElementById(tabId).classList.add('active');
+      });
+    });
+    
+    // إظهار/إخفاء البحث عن الأسئلة
+    const addQuestionBtn = document.getElementById('add-question-btn');
+    const questionSearch = document.getElementById('question-search');
+    
+    addQuestionBtn.addEventListener('click', () => {
+      questionSearch.style.display = questionSearch.style.display === 'none' ? 'block' : 'none';
+    });
+    
+    // إرسال نموذج إنشاء اختبار
+    const createExamForm = document.getElementById('create-exam-form');
+    createExamForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      
+      // في تطبيق حقيقي، سيتم إرسال بيانات الاختبار إلى الخادم
+      alert('تم إنشاء الاختبار بنجاح!');
+      
+      // إعادة تعيين النموذج
+      createExamForm.reset();
+    });
+  </script>
+</body>
+</html>

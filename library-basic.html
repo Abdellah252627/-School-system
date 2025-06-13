@@ -1,0 +1,1455 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>نظام إدارة المدرسة - مكتبة المصادر التعليمية</title>
+  
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <style>
+    /* General Styles */
+    :root {
+      --primary-color: #3498db;
+      --primary-color-dark: #2980b9;
+      --secondary-color: #2c3e50;
+      --bg-color: #f8f9fa;
+      --text-color: #333;
+      --border-color: #ddd;
+      --success-color: #2ecc71;
+      --warning-color: #f39c12;
+      --danger-color: #e74c3c;
+      --light-color: #f8f9fa;
+      --dark-color: #343a40;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      line-height: 1.6;
+      direction: rtl;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 15px;
+    }
+    
+    header {
+      background-color: #fff;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      padding: 15px 0;
+    }
+    
+    header .container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    header h1 {
+      color: var(--primary-color);
+    }
+    
+    nav ul {
+      display: flex;
+      list-style: none;
+    }
+    
+    nav li {
+      margin-right: 20px;
+    }
+    
+    nav a {
+      color: var(--text-color);
+      text-decoration: none;
+      font-weight: 500;
+    }
+    
+    nav a.active {
+      color: var(--primary-color);
+    }
+    
+    main {
+      padding: 30px 0;
+    }
+    
+    .section-title {
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border-color);
+      color: var(--secondary-color);
+    }
+    
+    .btn {
+      display: inline-block;
+      background-color: var(--primary-color);
+      color: #fff;
+      padding: 8px 15px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      text-decoration: none;
+      font-size: 14px;
+      transition: background-color 0.3s;
+    }
+    
+    .btn:hover {
+      background-color: var(--primary-color-dark);
+    }
+    
+    .btn-success {
+      background-color: var(--success-color);
+    }
+    
+    .btn-warning {
+      background-color: var(--warning-color);
+    }
+    
+    .btn-danger {
+      background-color: var(--danger-color);
+    }
+    
+    .tabs {
+      display: flex;
+      margin-bottom: 20px;
+      border-bottom: 1px solid var(--border-color);
+    }
+    
+    .tab {
+      padding: 10px 20px;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+    }
+    
+    .tab.active {
+      border-bottom-color: var(--primary-color);
+      color: var(--primary-color);
+      font-weight: 500;
+    }
+    
+    .tab-content {
+      display: none;
+    }
+    
+    .tab-content.active {
+      display: block;
+    }
+    
+    /* Library System Styles */
+    .library-search {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 5px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      margin-bottom: 30px;
+    }
+    
+    .search-form {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+    
+    .search-form input {
+      flex: 1;
+      padding: 10px;
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+    }
+    
+    .advanced-search {
+      display: none;
+      margin-top: 15px;
+      padding-top: 15px;
+      border-top: 1px solid var(--border-color);
+    }
+    
+    .advanced-search.active {
+      display: block;
+    }
+    
+    .filter-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      margin-bottom: 15px;
+    }
+    
+    .filter-col {
+      flex: 1;
+      min-width: 200px;
+    }
+    
+    .filter-col select,
+    .filter-col input {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+    }
+    
+    .resources-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+    
+    .resource-card {
+      background-color: #fff;
+      border-radius: 5px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      transition: transform 0.3s;
+    }
+    
+    .resource-card:hover {
+      transform: translateY(-5px);
+    }
+    
+    .resource-header {
+      padding: 15px;
+      background-color: var(--secondary-color);
+      color: #fff;
+      position: relative;
+    }
+    
+    .resource-type {
+      position: absolute;
+      top: 15px;
+      left: 15px;
+      font-size: 24px;
+    }
+    
+    .resource-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 5px;
+      padding-left: 30px;
+    }
+    
+    .resource-category {
+      font-size: 14px;
+      opacity: 0.8;
+    }
+    
+    .resource-body {
+      padding: 15px;
+    }
+    
+    .resource-description {
+      margin-bottom: 15px;
+      font-size: 14px;
+      color: #666;
+      max-height: 60px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+    }
+    
+    .resource-meta {
+      display: flex;
+      justify-content: space-between;
+      color: #666;
+      font-size: 13px;
+      margin-bottom: 15px;
+    }
+    
+    .resource-stats {
+      display: flex;
+      gap: 10px;
+    }
+    
+    .resource-rating {
+      display: flex;
+      align-items: center;
+    }
+    
+    .rating-stars {
+      color: var(--warning-color);
+      margin-left: 5px;
+    }
+    
+    .resource-footer {
+      padding: 15px;
+      background-color: var(--light-color);
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .resource-author {
+      font-size: 13px;
+      color: #666;
+    }
+    
+    /* Featured Resources */
+    .featured-resources {
+      margin-bottom: 30px;
+    }
+    
+    .featured-title {
+      font-size: 20px;
+      margin-bottom: 15px;
+      color: var(--secondary-color);
+    }
+    
+    /* Resource Detail */
+    .resource-detail {
+      background-color: #fff;
+      border-radius: 5px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      margin-bottom: 30px;
+    }
+    
+    .resource-detail-header {
+      padding: 20px;
+      background-color: var(--secondary-color);
+      color: #fff;
+    }
+    
+    .resource-detail-title {
+      font-size: 24px;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+    
+    .resource-detail-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      font-size: 14px;
+      opacity: 0.9;
+    }
+    
+    .resource-detail-body {
+      padding: 20px;
+    }
+    
+    .resource-detail-description {
+      margin-bottom: 20px;
+      font-size: 16px;
+      line-height: 1.7;
+    }
+    
+    .resource-download {
+      background-color: var(--light-color);
+      border-radius: 5px;
+      padding: 20px;
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .file-info {
+      display: flex;
+      align-items: center;
+    }
+    
+    .file-icon {
+      font-size: 24px;
+      margin-left: 15px;
+      color: var(--primary-color);
+    }
+    
+    .file-details {
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .file-name {
+      font-weight: 600;
+      margin-bottom: 5px;
+    }
+    
+    .file-size {
+      font-size: 13px;
+      color: #666;
+    }
+    
+    .resource-comments {
+      margin-top: 30px;
+    }
+    
+    .comments-title {
+      font-size: 18px;
+      margin-bottom: 15px;
+      color: var(--secondary-color);
+    }
+    
+    .comment {
+      padding: 15px;
+      background-color: var(--light-color);
+      border-radius: 5px;
+      margin-bottom: 15px;
+    }
+    
+    .comment-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+    
+    .comment-author {
+      font-weight: 600;
+      color: var(--dark-color);
+    }
+    
+    .comment-date {
+      font-size: 13px;
+      color: #666;
+    }
+    
+    /* Upload Resource Form */
+    .upload-form {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 5px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      margin-bottom: 30px;
+    }
+    
+    .form-group {
+      margin-bottom: 15px;
+    }
+    
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: 500;
+    }
+    
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+    }
+    
+    .form-group textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+    
+    .tags-input {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      padding: 10px;
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      min-height: 100px;
+    }
+    
+    .tag {
+      padding: 5px 10px;
+      background-color: var(--primary-color);
+      color: #fff;
+      border-radius: 15px;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+    }
+    
+    .tag i {
+      margin-right: 5px;
+      cursor: pointer;
+    }
+    
+    .tags-input input {
+      border: none;
+      flex: 1;
+      padding: 5px;
+      min-width: 100px;
+    }
+    
+    .tags-input input:focus {
+      outline: none;
+    }
+    
+    .file-upload {
+      border: 2px dashed var(--border-color);
+      padding: 30px;
+      text-align: center;
+      border-radius: 5px;
+      margin-bottom: 15px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    
+    .file-upload:hover {
+      background-color: var(--light-color);
+    }
+    
+    .file-upload i {
+      font-size: 36px;
+      color: var(--primary-color);
+      margin-bottom: 10px;
+    }
+    
+    .file-upload input[type="file"] {
+      display: none;
+    }
+    
+    /* Pagination */
+    .pagination {
+      display: flex;
+      justify-content: center;
+      margin-top: 30px;
+    }
+    
+    .pagination a {
+      display: inline-block;
+      padding: 8px 12px;
+      margin: 0 5px;
+      border-radius: 4px;
+      background-color: #fff;
+      border: 1px solid var(--border-color);
+      color: var(--text-color);
+      text-decoration: none;
+      transition: all 0.3s;
+    }
+    
+    .pagination a.active {
+      background-color: var(--primary-color);
+      color: #fff;
+      border-color: var(--primary-color);
+    }
+    
+    .pagination a:hover:not(.active) {
+      background-color: var(--light-color);
+    }
+    
+    /* Media Queries */
+    @media (max-width: 768px) {
+      .filter-row {
+        flex-direction: column;
+        gap: 10px;
+      }
+      
+      .filter-col {
+        width: 100%;
+      }
+      
+      .resources-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .resource-detail-meta {
+        flex-direction: column;
+        gap: 10px;
+      }
+      
+      .search-form {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <h1>نظام إدارة المدرسة</h1>
+      <nav>
+        <ul>
+          <li><a href="#">الرئيسية</a></li>
+          <li><a href="#">الواجبات المنزلية</a></li>
+          <li><a href="#">المراسلات</a></li>
+          <li><a href="#">الجدول الدراسي</a></li>
+          <li><a href="#" class="active">المكتبة التعليمية</a></li>
+          <li><a href="#">الإعدادات</a></li>
+          <li><a href="#">تسجيل الخروج</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+  
+  <main>
+    <div class="container">
+      <h2 class="section-title">مكتبة المصادر التعليمية</h2>
+      
+      <div class="tabs">
+        <div class="tab active" data-tab="browse-resources">تصفح المصادر</div>
+        <div class="tab" data-tab="upload-resource">رفع مصدر جديد</div>
+        <div class="tab" data-tab="my-resources">مصادري</div>
+      </div>
+      
+      <!-- تصفح المصادر -->
+      <div class="tab-content active" id="browse-resources">
+        <!-- البحث -->
+        <div class="library-search">
+          <div class="search-form">
+            <input type="text" placeholder="ابحث عن مصادر تعليمية..." id="search-input">
+            <button class="btn">بحث</button>
+            <button class="btn" id="advanced-search-toggle">بحث متقدم</button>
+          </div>
+          
+          <div class="advanced-search" id="advanced-search">
+            <div class="filter-row">
+              <div class="filter-col">
+                <label for="category-filter">الفئة</label>
+                <select id="category-filter">
+                  <option value="">جميع الفئات</option>
+                  <option value="cat1">الرياضيات</option>
+                  <option value="cat2">العلوم</option>
+                  <option value="cat3">اللغة العربية</option>
+                  <option value="cat4">اللغة الإنجليزية</option>
+                  <option value="cat5">الدراسات الاجتماعية</option>
+                </select>
+              </div>
+              
+              <div class="filter-col">
+                <label for="subcategory-filter">الفئة الفرعية</label>
+                <select id="subcategory-filter" disabled>
+                  <option value="">اختر الفئة أولاً</option>
+                </select>
+              </div>
+              
+              <div class="filter-col">
+                <label for="type-filter">نوع المصدر</label>
+                <select id="type-filter">
+                  <option value="">جميع الأنواع</option>
+                  <option value="type1">مذكرة</option>
+                  <option value="type2">عرض تقديمي</option>
+                  <option value="type3">اختبار سابق</option>
+                  <option value="type4">ورقة عمل</option>
+                  <option value="type5">فيديو تعليمي</option>
+                  <option value="type7">كتاب إلكتروني</option>
+                </select>
+              </div>
+            </div>
+            
+            <div class="filter-row">
+              <div class="filter-col">
+                <label for="grade-filter">الصف</label>
+                <select id="grade-filter">
+                  <option value="">جميع الصفوف</option>
+                  <option value="7">الصف السابع</option>
+                  <option value="8">الصف الثامن</option>
+                  <option value="9">الصف التاسع</option>
+                </select>
+              </div>
+              
+              <div class="filter-col">
+                <label for="sort-filter">ترتيب حسب</label>
+                <select id="sort-filter">
+                  <option value="newest">الأحدث</option>
+                  <option value="popular">الأكثر شعبية</option>
+                  <option value="downloads">الأكثر تنزيلاً</option>
+                  <option value="title">العنوان</option>
+                </select>
+              </div>
+              
+              <div class="filter-col">
+                <label for="author-filter">المؤلف</label>
+                <input type="text" id="author-filter" placeholder="اسم المؤلف">
+              </div>
+            </div>
+            
+            <button class="btn">تطبيق الفلاتر</button>
+            <button class="btn" style="margin-right: 10px;">إعادة تعيين</button>
+          </div>
+        </div>
+        
+        <!-- المصادر المميزة -->
+        <div class="featured-resources">
+          <h3 class="featured-title">المصادر المميزة</h3>
+          
+          <div class="resources-grid">
+            <!-- مصدر مميز #1 -->
+            <div class="resource-card">
+              <div class="resource-header">
+                <div class="resource-type">
+                  <i class="fas fa-file-alt"></i>
+                </div>
+                <h3 class="resource-title">شرح الدوال الرياضية</h3>
+                <div class="resource-category">الرياضيات - الجبر</div>
+              </div>
+              <div class="resource-body">
+                <div class="resource-description">
+                  شرح مفصل للدوال الرياضية وأنواعها مع أمثلة متنوعة
+                </div>
+                <div class="resource-meta">
+                  <div class="resource-stats">
+                    <div><i class="fas fa-eye"></i> 87</div>
+                    <div><i class="fas fa-download"></i> 42</div>
+                  </div>
+                  <div class="resource-rating">
+                    <div class="rating-stars">
+                      <i class="fas fa-star"></i>
+                      <i class="fas fa-star"></i>
+                      <i class="fas fa-star"></i>
+                      <i class="fas fa-star"></i>
+                      <i class="fas fa-star-half-alt"></i>
+                    </div>
+                    4.5
+                  </div>
+                </div>
+              </div>
+              <div class="resource-footer">
+                <div class="resource-author">
+                  <i class="fas fa-user"></i> أحمد المعلم
+                </div>
+                <a href="#" class="btn">عرض المصدر</a>
+              </div>
+            </div>
+            
+            <!-- مصدر مميز #2 -->
+            <div class="resource-card">
+              <div class="resource-header">
+                <div class="resource-type">
+                  <i class="fas fa-film"></i>
+                </div>
+                <h3 class="resource-title">فيديو شرح قواعد اللغة الإنجليزية - الأزمنة</h3>
+                <div class="resource-category">اللغة الإنجليزية - القواعد</div>
+              </div>
+              <div class="resource-body">
+                <div class="resource-description">
+                  شرح مفصل بالفيديو لقواعد الأزمنة في اللغة الإنجليزية
+                </div>
+                <div class="resource-meta">
+                  <div class="resource-stats">
+                    <div><i class="fas fa-eye"></i> 214</div>
+                    <div><i class="fas fa-play"></i> 180</div>
+                  </div>
+                  <div class="resource-rating">
+                    <div class="rating-stars">
+                      <i class="fas fa-star"></i>
+                      <i class="fas fa-star"></i>
+                      <i class="fas fa-star"></i>
+                      <i class="fas fa-star"></i>
+                      <i class="fas fa-star"></i>
+                    </div>
+                    5.0
+                  </div>
+                </div>
+              </div>
+              <div class="resource-footer">
+                <div class="resource-author">
+                  <i class="fas fa-user"></i> أحمد المعلم
+                </div>
+                <a href="#" class="btn">عرض المصدر</a>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- كل المصادر -->
+        <h3 class="featured-title">جميع المصادر</h3>
+        
+        <div class="resources-grid">
+          <!-- مصدر #1 -->
+          <div class="resource-card">
+            <div class="resource-header">
+              <div class="resource-type">
+                <i class="fas fa-file-alt"></i>
+              </div>
+              <h3 class="resource-title">شرح الدوال الرياضية</h3>
+              <div class="resource-category">الرياضيات - الجبر</div>
+            </div>
+            <div class="resource-body">
+              <div class="resource-description">
+                شرح مفصل للدوال الرياضية وأنواعها مع أمثلة متنوعة
+              </div>
+              <div class="resource-meta">
+                <div class="resource-stats">
+                  <div><i class="fas fa-eye"></i> 87</div>
+                  <div><i class="fas fa-download"></i> 42</div>
+                </div>
+                <div class="resource-rating">
+                  <div class="rating-stars">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star-half-alt"></i>
+                  </div>
+                  4.5
+                </div>
+              </div>
+            </div>
+            <div class="resource-footer">
+              <div class="resource-author">
+                <i class="fas fa-user"></i> أحمد المعلم
+              </div>
+              <a href="#" class="btn">عرض المصدر</a>
+            </div>
+          </div>
+          
+          <!-- مصدر #2 -->
+          <div class="resource-card">
+            <div class="resource-header">
+              <div class="resource-type">
+                <i class="fas fa-file-powerpoint"></i>
+              </div>
+              <h3 class="resource-title">عرض تقديمي: الضوء والألوان</h3>
+              <div class="resource-category">العلوم - الفيزياء</div>
+            </div>
+            <div class="resource-body">
+              <div class="resource-description">
+                عرض تقديمي شامل عن الضوء وانكساره وظاهرة الألوان
+              </div>
+              <div class="resource-meta">
+                <div class="resource-stats">
+                  <div><i class="fas fa-eye"></i> 56</div>
+                  <div><i class="fas fa-download"></i> 31</div>
+                </div>
+                <div class="resource-rating">
+                  <div class="rating-stars">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="far fa-star"></i>
+                  </div>
+                  4.0
+                </div>
+              </div>
+            </div>
+            <div class="resource-footer">
+              <div class="resource-author">
+                <i class="fas fa-user"></i> أحمد المعلم
+              </div>
+              <a href="#" class="btn">عرض المصدر</a>
+            </div>
+          </div>
+          
+          <!-- مصدر #3 -->
+          <div class="resource-card">
+            <div class="resource-header">
+              <div class="resource-type">
+                <i class="fas fa-file-contract"></i>
+              </div>
+              <h3 class="resource-title">اختبار الفصل الأول - اللغة العربية</h3>
+              <div class="resource-category">اللغة العربية - النصوص</div>
+            </div>
+            <div class="resource-body">
+              <div class="resource-description">
+                نموذج اختبار الفصل الأول لمادة اللغة العربية للصف التاسع
+              </div>
+              <div class="resource-meta">
+                <div class="resource-stats">
+                  <div><i class="fas fa-eye"></i> 128</div>
+                  <div><i class="fas fa-download"></i> 95</div>
+                </div>
+                <div class="resource-rating">
+                  <div class="rating-stars">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="far fa-star"></i>
+                  </div>
+                  4.0
+                </div>
+              </div>
+            </div>
+            <div class="resource-footer">
+              <div class="resource-author">
+                <i class="fas fa-user"></i> أحمد المعلم
+              </div>
+              <a href="#" class="btn">عرض المصدر</a>
+            </div>
+          </div>
+          
+          <!-- مصدر #4 -->
+          <div class="resource-card">
+            <div class="resource-header">
+              <div class="resource-type">
+                <i class="fas fa-film"></i>
+              </div>
+              <h3 class="resource-title">فيديو شرح قواعد اللغة الإنجليزية - الأزمنة</h3>
+              <div class="resource-category">اللغة الإنجليزية - القواعد</div>
+            </div>
+            <div class="resource-body">
+              <div class="resource-description">
+                شرح مفصل بالفيديو لقواعد الأزمنة في اللغة الإنجليزية
+              </div>
+              <div class="resource-meta">
+                <div class="resource-stats">
+                  <div><i class="fas fa-eye"></i> 214</div>
+                  <div><i class="fas fa-play"></i> 180</div>
+                </div>
+                <div class="resource-rating">
+                  <div class="rating-stars">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                  </div>
+                  5.0
+                </div>
+              </div>
+            </div>
+            <div class="resource-footer">
+              <div class="resource-author">
+                <i class="fas fa-user"></i> أحمد المعلم
+              </div>
+              <a href="#" class="btn">عرض المصدر</a>
+            </div>
+          </div>
+          
+          <!-- مصدر #5 -->
+          <div class="resource-card">
+            <div class="resource-header">
+              <div class="resource-type">
+                <i class="fas fa-file-invoice"></i>
+              </div>
+              <h3 class="resource-title">ورقة عمل: حل المعادلات</h3>
+              <div class="resource-category">الرياضيات - الجبر</div>
+            </div>
+            <div class="resource-body">
+              <div class="resource-description">
+                ورقة عمل تدريبية لحل المعادلات الرياضية من الدرجة الأولى والثانية
+              </div>
+              <div class="resource-meta">
+                <div class="resource-stats">
+                  <div><i class="fas fa-eye"></i> 45</div>
+                  <div><i class="fas fa-download"></i> 32</div>
+                </div>
+                <div class="resource-rating">
+                  <div class="rating-stars">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star-half-alt"></i>
+                    <i class="far fa-star"></i>
+                  </div>
+                  3.5
+                </div>
+              </div>
+            </div>
+            <div class="resource-footer">
+              <div class="resource-author">
+                <i class="fas fa-user"></i> أحمد المعلم
+              </div>
+              <a href="#" class="btn">عرض المصدر</a>
+            </div>
+          </div>
+        </div>
+        
+        <!-- ترقيم الصفحات -->
+        <div class="pagination">
+          <a href="#">&laquo;</a>
+          <a href="#" class="active">1</a>
+          <a href="#">2</a>
+          <a href="#">3</a>
+          <a href="#">4</a>
+          <a href="#">5</a>
+          <a href="#">&raquo;</a>
+        </div>
+      </div>
+      
+      <!-- رفع مصدر جديد -->
+      <div class="tab-content" id="upload-resource">
+        <div class="upload-form">
+          <h3>رفع مصدر تعليمي جديد</h3>
+          <form id="upload-resource-form">
+            <div class="form-group">
+              <label for="resource-title">عنوان المصدر</label>
+              <input type="text" id="resource-title" placeholder="أدخل عنوان المصدر" required>
+            </div>
+            
+            <div class="form-group">
+              <label for="resource-description">وصف المصدر</label>
+              <textarea id="resource-description" placeholder="أدخل وصفًا مفصلاً للمصدر" required></textarea>
+            </div>
+            
+            <div class="form-group">
+              <label for="resource-category">الفئة</label>
+              <select id="resource-category" required>
+                <option value="">اختر الفئة</option>
+                <option value="cat1">الرياضيات</option>
+                <option value="cat2">العلوم</option>
+                <option value="cat3">اللغة العربية</option>
+                <option value="cat4">اللغة الإنجليزية</option>
+                <option value="cat5">الدراسات الاجتماعية</option>
+              </select>
+            </div>
+            
+            <div class="form-group">
+              <label for="resource-subcategory">الفئة الفرعية</label>
+              <select id="resource-subcategory" disabled required>
+                <option value="">اختر الفئة أولاً</option>
+              </select>
+            </div>
+            
+            <div class="form-group">
+              <label for="resource-type">نوع المصدر</label>
+              <select id="resource-type" required>
+                <option value="">اختر نوع المصدر</option>
+                <option value="type1">مذكرة</option>
+                <option value="type2">عرض تقديمي</option>
+                <option value="type3">اختبار سابق</option>
+                <option value="type4">ورقة عمل</option>
+                <option value="type5">فيديو تعليمي</option>
+                <option value="type6">رابط خارجي</option>
+                <option value="type7">كتاب إلكتروني</option>
+                <option value="type8">مقال</option>
+                <option value="type9">تطبيق</option>
+              </select>
+            </div>
+            
+            <div class="form-group">
+              <label for="resource-grade">الصف</label>
+              <select id="resource-grade" required>
+                <option value="">اختر الصف</option>
+                <option value="7">الصف السابع</option>
+                <option value="8">الصف الثامن</option>
+                <option value="9">الصف التاسع</option>
+              </select>
+            </div>
+            
+            <div class="form-group">
+              <label for="resource-tags">الكلمات المفتاحية</label>
+              <div class="tags-input" id="tags-input">
+                <input type="text" placeholder="أضف كلمات مفتاحية واضغط Enter" id="tag-input">
+              </div>
+              <small>أضف كلمات مفتاحية مفصولة بمفتاح Enter</small>
+            </div>
+            
+            <div class="form-group">
+              <label>ملف المصدر</label>
+              <div class="file-upload" id="file-upload">
+                <i class="fas fa-cloud-upload-alt"></i>
+                <p>اسحب وأفلت الملف هنا أو انقر للاختيار</p>
+                <p class="file-types">الأنواع المدعومة: PDF, DOCX, PPTX, MP4, JPG, PNG (الحد الأقصى: 50 ميجابايت)</p>
+                <input type="file" id="resource-file">
+              </div>
+              <div id="selected-file" style="display: none;"></div>
+            </div>
+            
+            <div class="form-group" id="external-link-group" style="display: none;">
+              <label for="external-link">الرابط الخارجي</label>
+              <input type="url" id="external-link" placeholder="أدخل رابط المصدر الخارجي">
+            </div>
+            
+            <div class="form-group">
+              <button type="submit" class="btn btn-success">رفع المصدر</button>
+              <button type="reset" class="btn">إعادة تعيين</button>
+            </div>
+          </form>
+        </div>
+      </div>
+      
+      <!-- مصادري -->
+      <div class="tab-content" id="my-resources">
+        <div class="resources-grid">
+          <!-- مصدر #1 -->
+          <div class="resource-card">
+            <div class="resource-header">
+              <div class="resource-type">
+                <i class="fas fa-file-alt"></i>
+              </div>
+              <h3 class="resource-title">شرح الدوال الرياضية</h3>
+              <div class="resource-category">الرياضيات - الجبر</div>
+            </div>
+            <div class="resource-body">
+              <div class="resource-description">
+                شرح مفصل للدوال الرياضية وأنواعها مع أمثلة متنوعة
+              </div>
+              <div class="resource-meta">
+                <div class="resource-stats">
+                  <div><i class="fas fa-eye"></i> 87</div>
+                  <div><i class="fas fa-download"></i> 42</div>
+                </div>
+                <div class="resource-rating">
+                  <div class="rating-stars">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star-half-alt"></i>
+                  </div>
+                  4.5
+                </div>
+              </div>
+            </div>
+            <div class="resource-footer">
+              <div>
+                <button class="btn btn-warning"><i class="fas fa-edit"></i> تعديل</button>
+                <button class="btn btn-danger"><i class="fas fa-trash"></i> حذف</button>
+              </div>
+              <a href="#" class="btn">عرض المصدر</a>
+            </div>
+          </div>
+          
+          <!-- مصدر #2 -->
+          <div class="resource-card">
+            <div class="resource-header">
+              <div class="resource-type">
+                <i class="fas fa-file-powerpoint"></i>
+              </div>
+              <h3 class="resource-title">عرض تقديمي: الضوء والألوان</h3>
+              <div class="resource-category">العلوم - الفيزياء</div>
+            </div>
+            <div class="resource-body">
+              <div class="resource-description">
+                عرض تقديمي شامل عن الضوء وانكساره وظاهرة الألوان
+              </div>
+              <div class="resource-meta">
+                <div class="resource-stats">
+                  <div><i class="fas fa-eye"></i> 56</div>
+                  <div><i class="fas fa-download"></i> 31</div>
+                </div>
+                <div class="resource-rating">
+                  <div class="rating-stars">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="far fa-star"></i>
+                  </div>
+                  4.0
+                </div>
+              </div>
+            </div>
+            <div class="resource-footer">
+              <div>
+                <button class="btn btn-warning"><i class="fas fa-edit"></i> تعديل</button>
+                <button class="btn btn-danger"><i class="fas fa-trash"></i> حذف</button>
+              </div>
+              <a href="#" class="btn">عرض المصدر</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+  
+  <script>
+    // التبديل بين علامات التبويب
+    const tabs = document.querySelectorAll('.tab');
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        // إزالة الفئة النشطة من جميع علامات التبويب
+        tabs.forEach(t => t.classList.remove('active'));
+        // إضافة الفئة النشطة إلى علامة التبويب المحددة
+        tab.classList.add('active');
+        
+        // إخفاء جميع محتويات علامات التبويب
+        const tabContents = document.querySelectorAll('.tab-content');
+        tabContents.forEach(content => content.classList.remove('active'));
+        
+        // إظهار المحتوى المقابل لعلامة التبويب المحددة
+        const tabId = tab.getAttribute('data-tab');
+        document.getElementById(tabId).classList.add('active');
+      });
+    });
+    
+    // التبديل بين البحث العادي والبحث المتقدم
+    const advancedSearchToggle = document.getElementById('advanced-search-toggle');
+    const advancedSearch = document.getElementById('advanced-search');
+    
+    advancedSearchToggle.addEventListener('click', () => {
+      advancedSearch.classList.toggle('active');
+      
+      if (advancedSearch.classList.contains('active')) {
+        advancedSearchToggle.textContent = 'إخفاء البحث المتقدم';
+      } else {
+        advancedSearchToggle.textContent = 'بحث متقدم';
+      }
+    });
+    
+    // تحديث الفئات الفرعية بناءً على الفئة المحددة
+    const categoryFilter = document.getElementById('category-filter');
+    const subcategoryFilter = document.getElementById('subcategory-filter');
+    
+    categoryFilter.addEventListener('change', () => {
+      const category = categoryFilter.value;
+      
+      if (category) {
+        subcategoryFilter.disabled = false;
+        subcategoryFilter.innerHTML = '<option value="">جميع الفئات الفرعية</option>';
+        
+        // في تطبيق حقيقي، سيتم تحميل الفئات الفرعية من الخادم
+        if (category === 'cat1') { // الرياضيات
+          addSubcategories(['الجبر', 'الهندسة', 'الإحصاء', 'حساب المثلثات', 'التفاضل والتكامل']);
+        } else if (category === 'cat2') { // العلوم
+          addSubcategories(['الفيزياء', 'الكيمياء', 'الأحياء', 'علوم الأرض']);
+        } else if (category === 'cat3') { // اللغة العربية
+          addSubcategories(['النحو', 'الصرف', 'البلاغة', 'الأدب', 'النصوص']);
+        } else if (category === 'cat4') { // اللغة الإنجليزية
+          addSubcategories(['القواعد', 'المفردات', 'الاستماع', 'المحادثة', 'الكتابة']);
+        } else if (category === 'cat5') { // الدراسات الاجتماعية
+          addSubcategories(['التاريخ', 'الجغرافيا', 'التربية الوطنية']);
+        }
+      } else {
+        subcategoryFilter.disabled = true;
+        subcategoryFilter.innerHTML = '<option value="">اختر الفئة أولاً</option>';
+      }
+    });
+    
+    function addSubcategories(subcategories) {
+      subcategories.forEach((subcat, index) => {
+        const option = document.createElement('option');
+        option.value = 'subcat' + (index + 1);
+        option.textContent = subcat;
+        subcategoryFilter.appendChild(option);
+      });
+    }
+    
+    // نفس الشيء للفئات الفرعية في نموذج رفع المصادر
+    const resourceCategory = document.getElementById('resource-category');
+    const resourceSubcategory = document.getElementById('resource-subcategory');
+    
+    resourceCategory.addEventListener('change', () => {
+      const category = resourceCategory.value;
+      
+      if (category) {
+        resourceSubcategory.disabled = false;
+        resourceSubcategory.innerHTML = '<option value="">اختر الفئة الفرعية</option>';
+        
+        // في تطبيق حقيقي، سيتم تحميل الفئات الفرعية من الخادم
+        if (category === 'cat1') { // الرياضيات
+          addResourceSubcategories(['الجبر', 'الهندسة', 'الإحصاء', 'حساب المثلثات', 'التفاضل والتكامل']);
+        } else if (category === 'cat2') { // العلوم
+          addResourceSubcategories(['الفيزياء', 'الكيمياء', 'الأحياء', 'علوم الأرض']);
+        } else if (category === 'cat3') { // اللغة العربية
+          addResourceSubcategories(['النحو', 'الصرف', 'البلاغة', 'الأدب', 'النصوص']);
+        } else if (category === 'cat4') { // اللغة الإنجليزية
+          addResourceSubcategories(['القواعد', 'المفردات', 'الاستماع', 'المحادثة', 'الكتابة']);
+        } else if (category === 'cat5') { // الدراسات الاجتماعية
+          addResourceSubcategories(['التاريخ', 'الجغرافيا', 'التربية الوطنية']);
+        }
+      } else {
+        resourceSubcategory.disabled = true;
+        resourceSubcategory.innerHTML = '<option value="">اختر الفئة أولاً</option>';
+      }
+    });
+    
+    function addResourceSubcategories(subcategories) {
+      subcategories.forEach((subcat, index) => {
+        const option = document.createElement('option');
+        option.value = 'subcat' + (index + 1);
+        option.textContent = subcat;
+        resourceSubcategory.appendChild(option);
+      });
+    }
+    
+    // إظهار/إخفاء حقل الرابط الخارجي حسب نوع المصدر
+    const resourceType = document.getElementById('resource-type');
+    const externalLinkGroup = document.getElementById('external-link-group');
+    const fileUpload = document.getElementById('file-upload');
+    
+    resourceType.addEventListener('change', () => {
+      if (resourceType.value === 'type6') { // رابط خارجي
+        externalLinkGroup.style.display = 'block';
+        fileUpload.style.display = 'none';
+      } else {
+        externalLinkGroup.style.display = 'none';
+        fileUpload.style.display = 'block';
+      }
+    });
+    
+    // إدارة منطقة سحب وإفلات الملفات
+    const fileUploadArea = document.getElementById('file-upload');
+    const resourceFile = document.getElementById('resource-file');
+    const selectedFile = document.getElementById('selected-file');
+    
+    fileUploadArea.addEventListener('click', () => {
+      resourceFile.click();
+    });
+    
+    resourceFile.addEventListener('change', () => {
+      if (resourceFile.files.length > 0) {
+        const file = resourceFile.files[0];
+        selectedFile.innerHTML = `
+          <div class="file-info">
+            <div class="file-icon"><i class="fas ${getFileIcon(file.name)}"></i></div>
+            <div class="file-details">
+              <div class="file-name">${file.name}</div>
+              <div class="file-size">${formatFileSize(file.size)}</div>
+            </div>
+          </div>
+          <button type="button" class="btn btn-danger" id="remove-file">إزالة</button>
+        `;
+        selectedFile.style.display = 'flex';
+        selectedFile.style.justifyContent = 'space-between';
+        selectedFile.style.alignItems = 'center';
+        selectedFile.style.padding = '10px';
+        selectedFile.style.backgroundColor = 'var(--light-color)';
+        selectedFile.style.borderRadius = '5px';
+        selectedFile.style.marginTop = '10px';
+        
+        // إضافة حدث إزالة الملف
+        document.getElementById('remove-file').addEventListener('click', () => {
+          resourceFile.value = '';
+          selectedFile.style.display = 'none';
+        });
+      }
+    });
+    
+    // منع السلوك الافتراضي لأحداث السحب والإفلات
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+      fileUploadArea.addEventListener(eventName, preventDefaults, false);
+    });
+    
+    function preventDefaults(e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    
+    // تغيير مظهر منطقة السحب والإفلات عند سحب الملفات فوقها
+    ['dragenter', 'dragover'].forEach(eventName => {
+      fileUploadArea.addEventListener(eventName, () => {
+        fileUploadArea.style.backgroundColor = 'var(--light-color)';
+        fileUploadArea.style.borderColor = 'var(--primary-color)';
+      });
+    });
+    
+    ['dragleave', 'drop'].forEach(eventName => {
+      fileUploadArea.addEventListener(eventName, () => {
+        fileUploadArea.style.backgroundColor = '';
+        fileUploadArea.style.borderColor = '';
+      });
+    });
+    
+    // معالجة إفلات الملف
+    fileUploadArea.addEventListener('drop', (e) => {
+      const dt = e.dataTransfer;
+      const file = dt.files[0];
+      
+      if (file) {
+        resourceFile.files = dt.files;
+        selectedFile.innerHTML = `
+          <div class="file-info">
+            <div class="file-icon"><i class="fas ${getFileIcon(file.name)}"></i></div>
+            <div class="file-details">
+              <div class="file-name">${file.name}</div>
+              <div class="file-size">${formatFileSize(file.size)}</div>
+            </div>
+          </div>
+          <button type="button" class="btn btn-danger" id="remove-file">إزالة</button>
+        `;
+        selectedFile.style.display = 'flex';
+        selectedFile.style.justifyContent = 'space-between';
+        selectedFile.style.alignItems = 'center';
+        selectedFile.style.padding = '10px';
+        selectedFile.style.backgroundColor = 'var(--light-color)';
+        selectedFile.style.borderRadius = '5px';
+        selectedFile.style.marginTop = '10px';
+        
+        // إضافة حدث إزالة الملف
+        document.getElementById('remove-file').addEventListener('click', () => {
+          resourceFile.value = '';
+          selectedFile.style.display = 'none';
+        });
+      }
+    });
+    
+    // إدارة الكلمات المفتاحية
+    const tagsInput = document.getElementById('tags-input');
+    const tagInput = document.getElementById('tag-input');
+    const tags = [];
+    
+    tagInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && tagInput.value.trim() !== '') {
+        e.preventDefault();
+        
+        const tag = tagInput.value.trim();
+        if (!tags.includes(tag)) {
+          tags.push(tag);
+          renderTags();
+        }
+        
+        tagInput.value = '';
+      }
+    });
+    
+    function renderTags() {
+      // إزالة جميع العناصر الموجودة باستثناء مربع النص
+      const elements = tagsInput.querySelectorAll('.tag');
+      elements.forEach(element => element.remove());
+      
+      // إعادة إنشاء العلامات
+      tags.forEach(tag => {
+        const tagElement = document.createElement('div');
+        tagElement.className = 'tag';
+        tagElement.innerHTML = `
+          ${tag}
+          <i class="fas fa-times" data-tag="${tag}"></i>
+        `;
+        
+        // إدراج العنصر قبل مربع النص
+        tagsInput.insertBefore(tagElement, tagInput);
+        
+        // إضافة حدث إزالة العلامة
+        tagElement.querySelector('i').addEventListener('click', () => {
+          const index = tags.indexOf(tag);
+          if (index !== -1) {
+            tags.splice(index, 1);
+            renderTags();
+          }
+        });
+      });
+    }
+    
+    // نموذج رفع المصدر
+    const uploadResourceForm = document.getElementById('upload-resource-form');
+    uploadResourceForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      
+      // في تطبيق حقيقي، سيتم إرسال بيانات المصدر إلى الخادم
+      alert('تم رفع المصدر بنجاح!');
+      
+      // إعادة تعيين النموذج
+      uploadResourceForm.reset();
+      tags.length = 0;
+      renderTags();
+      selectedFile.style.display = 'none';
+    });
+    
+    // وظائف مساعدة
+    function getFileIcon(filename) {
+      const ext = filename.split('.').pop().toLowerCase();
+      
+      if (['pdf'].includes(ext)) {
+        return 'fa-file-pdf';
+      } else if (['doc', 'docx'].includes(ext)) {
+        return 'fa-file-word';
+      } else if (['ppt', 'pptx'].includes(ext)) {
+        return 'fa-file-powerpoint';
+      } else if (['xls', 'xlsx', 'csv'].includes(ext)) {
+        return 'fa-file-excel';
+      } else if (['jpg', 'jpeg', 'png', 'gif'].includes(ext)) {
+        return 'fa-file-image';
+      } else if (['mp4', 'avi', 'mov'].includes(ext)) {
+        return 'fa-file-video';
+      } else if (['mp3', 'wav'].includes(ext)) {
+        return 'fa-file-audio';
+      } else {
+        return 'fa-file';
+      }
+    }
+    
+    function formatFileSize(bytes) {
+      if (bytes === 0) return '0 Bytes';
+      
+      const k = 1024;
+      const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+      const i = Math.floor(Math.log(bytes) / Math.log(k));
+      
+      return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    }
+  </script>
+</body>
+</html>

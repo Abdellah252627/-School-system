@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>تجربة رفع الواجبات المنزلية - PDF</title>
+  
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <style>
+    /* General Styles */
+    :root {
+      --primary-color: #3498db;
+      --primary-color-dark: #2980b9;
+      --secondary-color: #2c3e50;
+      --bg-color: #f8f9fa;
+      --text-color: #333;
+      --border-color: #ddd;
+      --success-color: #2ecc71;
+      --warning-color: #f39c12;
+      --danger-color: #e74c3c;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      line-height: 1.6;
+      direction: rtl;
+      padding: 20px;
+    }
+    
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background-color: #fff;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      padding: 30px;
+    }
+    
+    h1 {
+      color: var(--primary-color);
+      text-align: center;
+      margin-bottom: 30px;
+      padding-bottom: 15px;
+      border-bottom: 2px solid var(--border-color);
+    }
+    
+    .homework-info {
+      background-color: #f8f9fa;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 30px;
+      border-right: 4px solid var(--primary-color);
+    }
+    
+    .homework-title {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--secondary-color);
+      margin-bottom: 10px;
+    }
+    
+    .homework-subject {
+      display: inline-block;
+      padding: 4px 12px;
+      background-color: var(--primary-color);
+      color: #fff;
+      border-radius: 15px;
+      font-size: 14px;
+      margin-bottom: 10px;
+    }
+    
+    .homework-description {
+      color: #666;
+      margin-bottom: 15px;
+    }
+    
+    .homework-meta {
+      display: flex;
+      gap: 20px;
+      font-size: 14px;
+      color: #666;
+    }
+    
+    .homework-meta i {
+      margin-left: 5px;
+      color: var(--primary-color);
+    }
+    
+    /* Enhanced File Upload Styles */
+    .file-upload-container {
+      margin: 20px 0;
+    }
+    
+    .file-dropzone {
+      border: 2px dashed var(--border-color);
+      padding: 40px;
+      text-align: center;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      background-color: #fafafa;
+    }
+    
+    .file-dropzone:hover {
+      background-color: #f0f8ff;
+      border-color: var(--primary-color);
+      transform: translateY(-2px);
+    }
+
+    .file-dropzone.dragover {
+      background-color: #e3f2fd;
+      border-color: var(--primary-color);
+      border-style: solid;
+      transform: scale(1.02);
+    }
+
+    .dropzone-content i {
+      font-size: 64px;
+      color: var(--primary-color);
+      margin-bottom: 20px;
+      display: block;
+    }
+
+    .dropzone-content h3 {
+      color: var(--secondary-color);
+      margin-bottom: 15px;
+      font-size: 24px;
+    }
+
+    .dropzone-content p {
+      color: #666;
+      margin-bottom: 8px;
+      font-size: 16px;
+    }
+
+    .file-restrictions {
+      font-size: 14px;
+      color: #999;
+      font-style: italic;
+    }
+
+    .uploaded-files {
+      display: none;
+      margin-top: 30px;
+    }
+
+    .uploaded-files h4 {
+      color: var(--secondary-color);
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border-color);
+      font-size: 18px;
+    }
+
+    .files-list {
+      max-height: 400px;
+      overflow-y: auto;
+    }
+
+    .file-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 15px;
+      background-color: #f8f9fa;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      margin-bottom: 10px;
+      transition: all 0.3s;
+    }
+
+    .file-item:hover {
+      background-color: #e9ecef;
+      transform: translateX(5px);
+    }
+
+    .file-info {
+      display: flex;
+      align-items: center;
+      flex: 1;
+    }
+
+    .file-icon {
+      margin-left: 15px;
+      color: #dc3545;
+      font-size: 32px;
+    }
+
+    .file-details {
+      flex: 1;
+    }
+
+    .file-name {
+      font-weight: 600;
+      color: var(--secondary-color);
+      margin-bottom: 5px;
+      font-size: 16px;
+    }
+
+    .file-meta {
+      font-size: 14px;
+      color: #666;
+    }
+
+    .file-meta span {
+      margin-left: 20px;
+    }
+
+    .file-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn {
+      display: inline-block;
+      background-color: var(--primary-color);
+      color: #fff;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      text-decoration: none;
+      font-size: 14px;
+      transition: all 0.3s;
+      font-weight: 500;
+    }
+
+    .btn:hover {
+      background-color: var(--primary-color-dark);
+      transform: translateY(-2px);
+    }
+
+    .btn-sm {
+      padding: 6px 12px;
+      font-size: 12px;
+    }
+
+    .btn-success {
+      background-color: var(--success-color);
+    }
+
+    .btn-success:hover {
+      background-color: #27ae60;
+    }
+
+    .btn-preview {
+      background-color: #17a2b8;
+    }
+
+    .btn-preview:hover {
+      background-color: #138496;
+    }
+
+    .btn-danger {
+      background-color: var(--danger-color);
+    }
+
+    .btn-danger:hover {
+      background-color: #c0392b;
+    }
+
+    /* Alert Messages */
+    .alert {
+      padding: 15px 20px;
+      border-radius: 6px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      animation: slideIn 0.3s ease;
+      font-weight: 500;
+    }
+
+    .alert i {
+      margin-left: 10px;
+      font-size: 18px;
+    }
+
+    .alert-success {
+      background-color: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+
+    .alert-error {
+      background-color: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .form-group {
+      margin-bottom: 25px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: var(--secondary-color);
+    }
+
+    .form-group textarea {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      resize: vertical;
+      min-height: 100px;
+      font-family: inherit;
+    }
+
+    .form-group textarea:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+    }
+
+    .submit-section {
+      text-align: center;
+      margin-top: 30px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border-color);
+    }
+
+    .submit-section .btn {
+      padding: 12px 30px;
+      font-size: 16px;
+      margin: 0 10px;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .container {
+        margin: 10px;
+        padding: 20px;
+      }
+      
+      .homework-meta {
+        flex-direction: column;
+        gap: 10px;
+      }
+      
+      .file-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+      }
+      
+      .file-actions {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1><i class="fas fa-upload"></i> تجربة رفع الواجبات المنزلية</h1>
+    
+    <!-- معلومات الواجب -->
+    <div class="homework-info">
+      <div class="homework-title">مراجعة درس الجبر</div>
+      <span class="homework-subject">الرياضيات</span>
+      <div class="homework-description">
+        حل التمارين من صفحة 25 إلى صفحة 27 في كتاب الرياضيات وتسليمها بصيغة PDF
+      </div>
+      <div class="homework-meta">
+        <div>
+          <i class="fas fa-calendar-alt"></i>
+          تاريخ التعيين: 8 مايو 2024
+        </div>
+        <div>
+          <i class="fas fa-clock"></i>
+          تاريخ التسليم: 15 مايو 2024
+        </div>
+        <div>
+          <i class="fas fa-user"></i>
+          المعلم: أحمد المعلم
+        </div>
+      </div>
+    </div>
+
+    <!-- نموذج التسليم -->
+    <form id="homework-submission-form">
+      <div class="form-group">
+        <label for="submission-notes">ملاحظات (اختياري):</label>
+        <textarea id="submission-notes" placeholder="أي ملاحظات إضافية حول الواجب المنزلي..."></textarea>
+      </div>
+      
+      <div class="form-group">
+        <label>رفع ملفات PDF:</label>
+        <div id="file-upload-demo"></div>
+      </div>
+      
+      <div class="submit-section">
+        <button type="button" class="btn btn-success" onclick="submitHomework()">
+          <i class="fas fa-paper-plane"></i> تسليم الواجب
+        </button>
+        <button type="button" class="btn" onclick="clearAll()">
+          <i class="fas fa-trash"></i> مسح الكل
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- تحميل نظام الواجبات -->
+  <script src="js/homework-system.js"></script>
+  
+  <script>
+    // إنشاء واجهة رفع الملفات
+    let fileUploadUI;
+    
+    document.addEventListener('DOMContentLoaded', function() {
+      // إنشاء واجهة رفع الملفات
+      fileUploadUI = new homeworkSystem.FileUploadUI(
+        'file-upload-demo', 
+        homeworkSystem.globalFileManager
+      );
+      window.currentFileUploadUI = fileUploadUI;
+    });
+
+    // وظيفة تسليم الواجب
+    function submitHomework() {
+      const notes = document.getElementById('submission-notes').value;
+      const files = homeworkSystem.globalFileManager.getFiles();
+      
+      if (files.length === 0) {
+        showAlert('يرجى رفع ملف PDF واحد على الأقل', 'error');
+        return;
+      }
+
+      // محاكاة تسليم الواجب
+      showAlert('جاري تسليم الواجب...', 'success');
+      
+      setTimeout(() => {
+        // تحويل الملفات إلى تنسيق مناسب للحفظ
+        const fileData = files.map(f => ({
+          name: f.name,
+          size: homeworkSystem.globalFileManager.formatFileSize(f.size),
+          uploadDate: f.uploadDate.toISOString(),
+          url: '#' // في التطبيق الحقيقي، سيكون هذا رابط الملف المحفوظ
+        }));
+
+        console.log('تم تسليم الواجب:', {
+          homeworkId: 'hw1',
+          studentId: '3',
+          notes: notes,
+          files: fileData,
+          submissionDate: new Date().toISOString()
+        });
+
+        showAlert('تم تسليم الواجب بنجاح! 🎉', 'success');
+        
+        // مسح النموذج بعد التسليم الناجح
+        setTimeout(() => {
+          clearAll();
+        }, 2000);
+      }, 1500);
+    }
+
+    // وظيفة مسح الكل
+    function clearAll() {
+      document.getElementById('submission-notes').value = '';
+      homeworkSystem.globalFileManager.clearFiles();
+      if (fileUploadUI) {
+        fileUploadUI.clearFiles();
+      }
+      showAlert('تم مسح جميع البيانات', 'success');
+    }
+
+    // وظيفة إظهار الرسائل
+    function showAlert(message, type) {
+      const alertDiv = document.createElement('div');
+      alertDiv.className = `alert alert-${type}`;
+      alertDiv.innerHTML = `
+        <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i>
+        ${message}
+      `;
+
+      const container = document.querySelector('.container');
+      container.insertBefore(alertDiv, container.firstChild);
+
+      // إزالة الرسالة بعد 5 ثوان
+      setTimeout(() => {
+        alertDiv.remove();
+      }, 5000);
+    }
+
+    // إضافة معلومات إضافية للتجربة
+    console.log('🎓 نظام رفع الواجبات المنزلية جاهز!');
+    console.log('✅ يمكنك رفع ملفات PDF فقط');
+    console.log('📁 الحد الأقصى لحجم الملف: 10MB');
+    console.log('🔍 يمكنك معاينة الملفات قبل التسليم');
+  </script>
+</body>
+</html>
